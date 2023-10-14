@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Assignment 1</title>
+        <meta charset="utf-8">
+        <script type="text/javascript" src="app.js"></script>
+        <script type="text/javascript" src="mesh_small.json"></script>
+        <style>
+            body {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            #info{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            #firstPart,
+            #secondPart{
+                display: flex;
+                flex-direction: column;
+                max-width: 550px;
+                margin: 20px;
+            }
+        
+            h1, h2, h3 {
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                text-align: justify;
+                margin: 15px 0;
+            }
+        
+            p {
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                text-align: justify;
+                margin: 0;
+            }
+
+            button {
+                height: fit-content; 
+                text-align: center; 
+                margin-top: 20px; 
+                padding: 3px 12px;
+            }
+
+            #colinear1Button, #colinear2Button {
+                margin: 5px;
+            }
+
+          </style>
+    </head>
+
+    <body>
+        <canvas id="canvas1" width="900" height="900" style="border: 2px solid black;"></canvas>
+        <canvas id="canvas2" width="900" height="900" style="border: 2px solid black; display: none;"></canvas>
+      
+        <div id="info">
+          <h1>Numerical Geometry: Assignment 1</h1>
+          <p style="margin-bottom: 50px;">Authors: Gabriel de Morais Pires and Gabriela Ishikawa</p>
+          
+          <div id="firstPart">
+            <h2>Intersection Implementation</h2>
+            <p>
+                This implementation shows the intersection of two segments. To use it, you must first insert 
+                    the points of each segment by clicking on the canvas next to it. If the segments intersect, 
+                    that point will be highlighted. If you want to clear the canvas, press the "Clear Canvas" button.
+            </p>
+            <p>If you want to clear the canvas, press the "Clear Canvas" button:</p>
+            <div style="display:flex; flex-direction: column;">
+                <button id="clear1Button">Clear Canvas</button>
+            </div>
+
+      
+            <h3 style="margin-top: 20px">Colinear Segments Cases</h3>
+            <p>
+                There is a degenerative case in which two segments are collinear Therefore, if there is an 
+                    intersection between them, the intersection is a line segment. To visualise these cases, with 
+                    and without intersection, simply press the buttons below:
+            </p>
+            <div style="display:flex; flex-direction: column;">
+                <button id="colinear1Button" style="margin-top: 20px;">With Intersection</button>
+                <button id="colinear2Button">Without Intersection</button>
+            </div>
+
+          </div>
+
+          <div id="secondPart" style="display: none;">
+            <h2>Mesh Implementation</h2>
+            <p>
+                This implementation shows the mesh provided by the json file and identifies the triangle in 
+                    which the point clicked on in the canvas is located. The nodes and triangles of the mesh have 
+                    been identified with numbers provided in the file.
+            </p>
+            <p>If you want to go back to the initial mesh, just click on the "Generate Initial Mesh" button:</p>
+            <div style="display:flex; flex-direction: column;">
+                <button id="clear2Button">Generate Initial Mesh</button>
+            </div>
+            
+
+            <h3 style="margin-top: 20px;">Creating new nodes in mesh</h3>
+            <p>To add a new point to the mesh, press the "Create new node" button and select a point on the canvas next to it.</p>                
+            <div style="display: flex; flex-direction: column;">
+                <button id="nodeButton">Create new node</button>
+                <a id="newNode" style="margin-left: 20px; display: none; font-size: 12px; font-style: italic; text-align: center; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Select point on canvas to create a node!</a>    
+            </div>
+          </div>
+      
+          <button id="switchButton">Change Implementation</button>
+
+        </div>
+
+        <script>
+            const canvas1 = document.getElementById("canvas1");
+            const canvas2 = document.getElementById("canvas2");
+            const firstPart = document.getElementById("firstPart");
+            const secondPart = document.getElementById("secondPart");
+
+            const colinear1Button = document.getElementById("colinear1Button");
+            const colinear2Button = document.getElementById("colinear2Button");
+            const clear1Button = document.getElementById("clear1Button");
+            const clear2Button = document.getElementById("clear2Button");
+            const nodeButton = document.getElementById("nodeButton");
+            const switchButton = document.getElementById("switchButton");
+            const newNode = document.getElementById("newNode");
+
+            // ALTERNATE IMPLEMENTATIONS ON BUTTON CLICK
+            switchButton.addEventListener("click", function () {
+                if (canvas1.style.display === "none") {
+                    canvas1.style.display = "block";
+                    canvas2.style.display = "none";
+                    firstPart.style.display = "block";
+                    secondPart.style.display = "none";
+                } else {
+                    canvas1.style.display = "none";
+                    canvas2.style.display = "block";
+                    firstPart.style.display = "none";
+                    secondPart.style.display = "block";
+                }
+            });
+
+            main(canvas1, canvas2);
+
+        </script>
+    </body>
+    
+</html>

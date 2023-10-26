@@ -1,0 +1,43 @@
+Dizer que o cérebro usa Bayesian estimation quer dizer que, para estimar a distribuição posterior, consideramos a distribuição prior e evidencia seguindo a regra de Bayes:
+
+$$ p(A|B) = p (B|A)\frac{p(A)}{p(B)} $$
+
+A: current trial given an evidence -or- lateral shift -or- prior
+
+B: evidence
+
+p(A): prior distribution of A
+
+p(B|A): likelihood of getting B when A is true
+
+A pergunta que nós queremos responder é: será que o cérebro usa processo Bayesiano em processos sensomotores para integrar as informações vindas dos sensores e do prior knowledge? Duas perguntas que poderiam ser feitas anteriormente à essa: será que o cérebro realmente usa modelos estatísticos para armazenar as informações vindas dos olhos e de atividades sensomotores prévias (prior knowledge)? Afinal, se o cérebro não conseguir representar estatisticamente a incerteza relacionada às informações sensoriais e prior, de nada serveria usar o modelo Baeysiano e a primeria pergunta não faria sentido. 
+
+Vamos então reorganizar as perguntas:
+
+1) Será que o prior knowledge é representado mentalmente através de uma distribuição estatística com incertezas associadas à este processo?
+
+2) Será que as informações sensoriais são representadas mentalmente através de uma distribuição estatística com incertezas associadas à este processo?
+
+3) Será que o cérebro usa processo Bayesiano para integrar essas informações?
+
+Para responder a primeira pergunta: precisamos achar uma forma relevante de representar o prior knowledge. Para isto: selecionar casos em que não há feedback e que também não aparece o resultado no final (afinal não queremos influência da atividade sensorial). Escolher um/vários subjects e plotar a distribuição vs prior lateral shift (cm). Em seguida plotar em cima uma gaussiana com mpedia 1 e dp 0.5 cm.  
+
+Podemos fazer esse plot tanto para cada subject e mostrar que, de fato, o cérebro identificou que o lateral shift era de 1 cm. De acordo com o artigo, a média vai dar 0.97 +- 0.06 cm. 
+
+O artigo não fala nada do desvio padrão desse valor, mas podemos calculá-lo. Muito provavelmente ele será diferente de 0.5, isto provavelmente pq os participantes foram treinados sob várias condições: com/sem blur, com/sem feedback. Então eles aprenderam que a média era de 1cm mas o desvio padrão diferente de 0.5cm indica uma adaptabilidade à essas demais situações...
+
+Saber se as informações sensoriais são realmente representadas mentalmente através de uma distribuição estatística significaria ser capaz de medir diretamente as incertezas associadas à visão. No entanto, essas informações são "contaminadas" com o prior knowledge natural de cada ser humano. O experimento, ao controlar o ambiente, tenta controlar esse "prior" natural. Vamos então considerar que, realmente, a visão é armazenada como um distribuição estatística.
+
+Esta visão é consistente com estudos: 25, 26 27
+
+26. Basso, M. A. & Wurtz, R. H. Modulation of neuronal activity in superior colliculus by changes in target probability. J. Neurosci. 18, 7519–7534 (1998).
+27. Platt, M. L. & Glimcher, P. W. Neural correlates of decision variables in parietal cortex. Nature 400, 233–238 (1999).
+28. Carpenter, R. H. & Williams, M. L. Neural computation of log likelihood in control of saccadic eye movements. Nature 377, 59–62 (1995).
+
+Apesar de não estar no artigo, acho que um dos jeitos que a gente pode ao menos inferir sobre esse tópio é fazer o seguinte:
+
+Plotar a distribuição do true lateral shift para os casos 1, 2, 3, e 4. Fazer em um mesmo gráfico com diferentes curvas para cada um casos. Vamos ver que todos seguem uma distribuição gaussiana mas com médias e desvio padrões diferentes. Sabendo que operações com gaussianas resultam em gaussianas, estaríamos apontando na direção de que, de fato, o cérebro usa modelos estatísticos para os olhos. No entanto, isso não é uma prova pelo problema definido anteriormente: prior natural.
+
+Conclusão: o cérebro usa modelos estatístios para armazenar informação sensorial e prior.
+
+Esses são os plot esseniais, mas podemos fazer também o plot da trajetória média nos candidatos para cada condição... mas não sei o que isso iria ajudar a não ser mostrar o caminho mesmo kkkk. Porque no final das contas, o que importa é o estimated lateral shift, que é a métrica usada para comparar com o real shfit e responder às hipóteses.

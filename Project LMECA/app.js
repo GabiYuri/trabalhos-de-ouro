@@ -2,70 +2,6 @@
 Gabriel de Morais Pires
 Gabriela Ishikawa */
 
-function setup_triangle_location(mesh, canvas) {
-	console.log("Hello from setup_triangle_location");
-	draw_mesh(mesh, canvas);
-	
-	canvas.addEventListener("mousedown", function(e){
-		find_triangle_location(e, mesh, canvas);
-	});
-
-    // Clear canvas button
-    clear1Button.addEventListener("click", function () {
-        clear_canvas(canvas);
-        draw_mesh(mesh, canvas);
-    });
-	/**
-	 * Escolher um triangulo e pegar o incidentEdge e pegar o ponto medio desse segmento
-	 * Traçar um segmento entre o ponto medio e o ponto desejado
-	 * 
-	 * Verificar se esse segmento tem intersecção com incidentEdge.next
-	 * (1) Se tem -> ir para incidentEdge.next.oppo e verificar se tem intersecção com incidentEdge.next.oppo.next
-	 * (2) Se não tem -> verificar se tem intersecção com o incidentEdge.next.next
-	 * 		Se tem -> ir para incidentEdge.next.next.oppo e tratar como (1)
-	 * 		Se não tem -> verificar se está dentro do triangulo
-	 * 			Se não está -> ir para incidentEdge.oppo e tratar como (1)
-	 */
-}
-
-function setup_segment_location(mesh, canvas) {
-	console.log("Hello from setup_segment_location");
-	draw_mesh(mesh, canvas);
-	// TODO 
-
-	segments = [];
-	canvas.addEventListener("mousedown", function(e){
-		const rect = canvas.getBoundingClientRect();
-		var point = [e.clientX - rect.left, e.clientY - rect.top]
-		segments.push(point);
-		draw_point(point[0], point[1], canvas, color="midnightblue");
-
-		if (segments.length % 2 == 0){
-			console.log("segment");
-			idx = segments.length/2 - 1;
-			draw_edge(segments[2*idx], segments[2*idx + 1], canvas, color="midnightblue");
-			find_segment_location([segments[2*idx], segments[2*idx + 1]], mesh, canvas);
-		}
-	});
-
-    // Clear canvas button
-    clear2Button.addEventListener("click", function () {
-        clear_canvas(canvas);
-		draw_mesh(mesh, canvas);
-    });
-
-	/**
-	 * Pegar o primeiro ponto e achar em que triangulo está
-	 * Traçar o segmento entre os pontos dados
-	 * 
-	 * Verificar se este segmento intersecta com incidentEdge
-	 * (1) Se não -> verificar se intersecta com o incidentEdge.next
-	 * 		Se não -> verificar se intersecta com o incidentEdge.next.next
-	 * (2) Se sim -> ir para o incidentEdge.oppo, pintar o triangulo e verificar se tem intersecção com os outros edges do triangulo
-	 * 		Se não -> verificar se está dentro do triangulo
-	 */
-}
-
 function create_mesh(mesh_data) {
 	// Initialize data structure of a doubly-connected edge list
 	mesh = {
@@ -141,6 +77,44 @@ function create_mesh(mesh_data) {
 	return mesh;
 }
 
+
+function create_mesh2(nodeData) {
+	// Initialize data structure of a doubly-connected edge list
+	mesh = {
+		nodes: [],
+		faces: [],
+		edges: []
+	};
+
+
+	// Mesh data from json file
+	node_data = nodeData;			// nodes - Coordinates, Indices
+
+	// Create nodes
+	for (let i = 0; i < node_data.length; i++){
+		// node structure
+		node = {
+			id: i,
+			pos: node_data[i]
+		};
+		// add node to mesh.nodes array
+		mesh.nodes.push(node);
+	}
+	return mesh;
+}
+
+function draw_mesh2(mesh, canvas) {
+	size_adapt(canvas, mesh.nodes, offset=0);
+
+	context = canvas.getContext('2d');
+	context.strokeStyle = "steelblue";
+	
+	// Draw nodes
+	for (node of mesh.nodes) {
+		draw_point(node.pos[0], node.pos[1], canvas, color="midnightblue", label=node.id.toString());
+	}
+}
+
 function draw_mesh(mesh, canvas) {
 	size_adapt(canvas, mesh.nodes, offset=0);
 
@@ -159,31 +133,151 @@ function draw_mesh(mesh, canvas) {
 	}
 }
 
-function size_adapt(canvas, nodes, offset){
+function size_adapt(canvas, nodes, offset, margin=0) {
     // bounding box of the mesh
-	let xMin = Number.MAX_VALUE;
-	let yMin = Number.MAX_VALUE;
-	let xMax = Number.MIN_VALUE;
-	let yMax = Number.MIN_VALUE;
-	for (node of nodes) {
-		xMax = Math.max(xMax, node.pos[0]);
-		xMin = Math.min(xMin, node.pos[0]);
-		yMax = Math.max(yMax, node.pos[1]);
-		yMin = Math.min(yMin, node.pos[1]);
-	}
-	const xRange = xMax - xMin;
-	const yRange = yMax - yMin;
-	const scale = Math.min(canvas.width/xRange, canvas.height/yRange);
-    
+    let xMin = Number.MAX_VALUE;
+    let yMin = Number.MAX_VALUE;
+    let xMax = Number.MIN_VALUE;
+    let yMax = Number.MIN_VALUE;
+
+    for (node of nodes) {
+        xMax = Math.max(xMax, node.pos[0]);
+        xMin = Math.min(xMin, node.pos[0]);
+        yMax = Math.max(yMax, node.pos[1]);
+        yMin = Math.min(yMin, node.pos[1]);
+    }
+
+    // Increase bounding box with a margin
+    xMin -= margin;
+    yMin -= margin;
+    xMax += margin;
+    yMax += margin;
+
+    const xRange = xMax - xMin;
+    const yRange = yMax - yMin;
+    const scale = Math.min(canvas.width / xRange, canvas.height / yRange);
+
+    // Transform node positions based on the adjusted bounding box and the offset
     for (node of nodes)
         node.pos = transform(node.pos, scale, xMin, yMin, offset);
 
-    return {scale:scale, xMin:xMin, yMin:yMin};
+    return { scale: scale, xMin: xMin, yMin: yMin };
 }
 
 function transform(pos, scale, xMin, yMin, offset) {
     return [offset+(pos[0]-xMin)*scale, offset+(pos[1]-yMin)*scale];
 }
+
+// Create a function that, for three points, returns the circumcenter and the circumradius
+function circumcenter(A, B, C) {
+	// check if the points are collinear
+	if (get_orientation(A, B, C) == 0) return null;
+	
+	// get the coordinates of the circumcenter
+	const x = ((A[0]**2 + A[1]**2)*(B[1] - C[1]) + (B[0]**2 + B[1]**2)*(C[1] - A[1]) + (C[0]**2 + C[1]**2)*(A[1] - B[1])) / (2*(A[0]*(B[1] - C[1]) - A[1]*(B[0] - C[0]) + B[0]*C[1] - B[1]*C[0]));
+	const y = ((A[0]**2 + A[1]**2)*(C[0] - B[0]) + (B[0]**2 + B[1]**2)*(A[0] - C[0]) + (C[0]**2 + C[1]**2)*(B[0] - A[0])) / (2*(A[0]*(B[1] - C[1]) - A[1]*(B[0] - C[0]) + B[0]*C[1] - B[1]*C[0]));
+	
+	// get the circumradius
+	const r = Math.sqrt((x - A[0])**2 + (y - A[1])**2);
+	return [x, y, r];
+}
+
+// Create a function that, for the circumcenter and the circumradius, plot the circumcircle
+function draw_circle(x, y, r, canvas) {
+
+	// draw the circumcircle
+	context = canvas.getContext('2d');
+	context.beginPath();
+	context.arc(x, y, r, 0, 2 * Math.PI);
+	context.stroke();
+}
+
+// Create a function to get the extreme points of the mesh
+function extreme_points(mesh) {
+	let xMin = Number.MAX_VALUE;
+	let yMin = Number.MAX_VALUE;
+	let xMax = Number.MIN_VALUE;
+	let yMax = Number.MIN_VALUE;
+
+	for (node of mesh.nodes) {
+		xMax = Math.max(xMax, node.pos[0]);
+		xMin = Math.min(xMin, node.pos[0]);
+		yMax = Math.max(yMax, node.pos[1]);
+		yMin = Math.min(yMin, node.pos[1]);
+	}
+
+	return [xMin, yMin, xMax, yMax];
+}
+
+// Create a function to get the bounding box of the mesh
+function bounding_box(mesh, canvas) {
+	// get the extreme points of the mesh
+	let [xMin, yMin, xMax, yMax] = extreme_points(mesh);
+
+	// get the size of the diagonal of the bounding box
+	const diagonal = Math.sqrt((xMax - xMin)**2 + (yMax - yMin)**2);
+	return diagonal;
+}
+
+// Get the coordinates of the midpoint of the bounding box 
+function midpoint(mesh) {
+	// get the extreme points of the mesh
+	let [xMin, yMin, xMax, yMax] = extreme_points(mesh);
+
+	// get the coordinates of the midpoint
+	const x = (xMin + xMax)/2;
+	const y = (yMin + yMax)/2;
+
+	return [x, y];
+}
+
+// Function that, given a circle and a point, returns the tangent line
+function tangent_line(x, y, r, point) {
+	// check if the point is on the circumference
+	if ((point[0] - x)**2 + (point[1] - y)**2 != r**2) return null;
+
+	// get the coordinates of the point
+	const [xPoint, yPoint] = point;
+
+	// get the slope of the tangent line
+	const m = (yPoint - y)/(xPoint - x);
+
+	// get the intercept of the tangent line
+	const b = yPoint - m*xPoint;
+
+	return [m, b];
+}
+
+function super_triangle(mesh, canvas) {
+	// get midpoint of the mesh
+	const [x, y] = midpoint(mesh);
+
+	// get the size of the diagonal of the bounding box
+	const diagonal = bounding_box(mesh, canvas);
+
+	const new_diagonal = diagonal*2;
+
+	// draw a circle at the midpoint of the mesh with the radius of the diagonal of the bounding box
+	draw_circle(x, y, new_diagonal, canvas);
+
+	// get a point at 0, 90, 225 degrees of the circle
+	const A = [x + new_diagonal, y];
+	const B = [x, y + new_diagonal];
+	const C = [x - new_diagonal/Math.sqrt(2), y - new_diagonal/Math.sqrt(2)];
+
+	// draw the points A, B and C
+	draw_point(A[0], A[1], canvas, color="midnightblue", label="A");
+	draw_point(B[0], B[1], canvas, color="midnightblue", label="B");
+	draw_point(C[0], C[1], canvas, color="midnightblue", label="C");
+
+	// draw the edges AB, BC and CA
+	draw_edge(A, B, canvas, color="midnightblue");
+	draw_edge(B, C, canvas, color="midnightblue");
+	draw_edge(C, A, canvas, color="midnightblue");
+
+
+}
+
 
 
 /**

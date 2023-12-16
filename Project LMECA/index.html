@@ -6,6 +6,7 @@
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="./style.css" type="text/css">
         <script type="text/javascript" src="mesh_small.json"></script>
+		<script type="text/javascript" src="nodes_coarse.json"></script>
 		<script type="text/javascript" src="app.js"></script>
         <script src="https://unpkg.com/robust-predicates@3.0.1/umd/predicates.min.js"></script>
 	</head>
@@ -15,7 +16,7 @@
 		<canvas id="canvas2" width="900" height="900", style="border:2px solid steelblue; display: none;"></canvas>
 		
 		<div id="info">
-			<h1>Numerical Geometry: Assignment 2</h1>
+			<h1>Numerical Geometry: Project</h1>
 			<p style="margin-bottom: 50px;">Authors: Gabriel de Morais Pires and Gabriela Ishikawa</p>
 			
 			<div id="firstPart">
@@ -53,8 +54,8 @@
 		<script>
             const canvas1 = document.getElementById("canvas1");
 			const canvas2 = document.getElementById("canvas2");
-			mesh = create_mesh(mesh_data);
-
+			mesh = create_mesh2(nodeData);
+			
             const clear1Button = document.getElementById("clear1Button");
             const clear2Button = document.getElementById("clear2Button");
             const switchButton = document.getElementById("switchButton");
@@ -74,8 +75,83 @@
                 }
             });
 
-            setup_triangle_location(mesh, canvas1);
-			setup_segment_location(mesh, canvas2);
+			// ZOOM AND CLICK AND DRAG
+			const ctx = canvas1.getContext("2d");
+
+			// Variables for zooming
+			let scale = 1;
+			let offsetX = 0;
+			let offsetY = 0;
+			let isDragging = false;
+			let startDragX, startDragY;
+
+			function draw() {
+				// Clear the entire canvas
+				ctx.clearRect(-10000, -10000, (canvas1.width)*1000, (canvas1.height)*1000);
+
+				// Draw your content here
+				ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+				draw_mesh2(mesh, canvas1);
+				//const [x, y, r] = circumcenter(mesh.nodes[0].pos, mesh.nodes[1].pos, mesh.nodes[2].pos);
+				//draw_circle(x, y, r, canvas1);
+				super_triangle(mesh, canvas1);
+				
+			}
+
+			function zoomIn() {
+				scale += 0.1;
+				draw();
+			}
+
+			function zoomOut() {
+				if (scale > 0.5) {
+					scale -= 0.1;
+					draw();
+				}
+			}
+
+			function handleScroll(event) {
+				if (event.deltaY < 0) {
+					zoomIn();
+				} else {
+					zoomOut();
+				}
+			}
+
+			function handleMouseDown(event) {
+				isDragging = true;
+				startDragX = event.clientX - offsetX;
+				startDragY = event.clientY - offsetY;
+			}
+
+			function handleMouseMove(event) {
+				if (isDragging) {
+					offsetX = event.clientX - startDragX;
+					offsetY = event.clientY - startDragY;
+					draw();
+				}
+			}
+
+			function handleMouseUp() {
+				isDragging = false;
+			}
+
+			function handleMouseLeave() {
+				isDragging = false;
+			}
+
+			// Event listeners
+			canvas1.addEventListener("wheel", handleScroll);
+			canvas1.addEventListener("mousedown", handleMouseDown);
+			canvas1.addEventListener("mousemove", handleMouseMove);
+			canvas1.addEventListener("mouseup", handleMouseUp);
+			canvas1.addEventListener("mouseleave", handleMouseLeave);
+
+			// Initial draw
+			draw();
+
+			
+
         </script>
 	</body>
 

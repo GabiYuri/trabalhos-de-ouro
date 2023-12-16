@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delaunator Example</title>
+</head>
+<body>
+  <canvas id="delaunayCanvas" width="1000" height="1000" style="border:1px solid #000;"></canvas>
+  <script src="./node_modules/delaunator/delaunator.js"></script>
+  <script>
+    // Your JavaScript code using Delaunator
+    // For example:
+    const points = [[ 163.7066120482703, 488.6650857430957 ],
+[ 835.3496491682408, 490.2996892628636 ],
+[ 493.9184515862498, 132.3760430705655 ],
+[ 498.3653964791732, 827.7386580272351 ],
+[ 300.7481903591385, 830.7029123438383 ],
+[ 396.1598772770956, 670.734446840082 ],
+[ 600.2015905170176, 675.5188916874412 ],
+[ 500.0000000025092, 480.3847577304367 ],
+[ 830.576912698845, 300.1844933888438 ],
+[ 814.6996124644995, 689.1493782611213 ],
+[ 169.3821434765657, 300.1135766065062 ],
+[ 188.1896957092664, 683.6414884284229 ],
+[ 315.7845613177837, 186.5278143482666 ],
+[ 694.476072991297, 840.9994610768936 ],
+[ 685.9211635201188, 172.4872797865501 ],
+[ 321.4614339243645, 387.3807148762196 ],
+[ 668.5228257598594, 385.3248791658106 ],
+[ 476.8832689941644, 317.4113279240561 ],
+[ 146.4101615147966, 853.5898384854262 ],
+[ 853.5898384857052, 853.5898384855643 ],
+[ 146.4101615145241, 146.4101615148656 ],
+[ 853.5898384865049, 146.4101615132356 ],
+[ 310.303028765564, 541.7981355851316 ],
+[ 689.6969712339486, 541.7981355822887 ]];
+    const delaunay = Delaunator.from(points);
+
+    const canvas = document.getElementById('delaunayCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Draw points
+    ctx.fillStyle = 'blue';
+    points.forEach(point => {
+      ctx.beginPath();
+      ctx.arc(point[0], point[1], 5, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+
+    // Draw edges
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < delaunay.triangles.length; i += 3) {
+      const p1 = points[delaunay.triangles[i]];
+      const p2 = points[delaunay.triangles[i + 1]];
+      const p3 = points[delaunay.triangles[i + 2]];
+
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.lineTo(p3[0], p3[1]);
+      ctx.closePath();
+      ctx.stroke();
+    }
+  </script>
+</body>
+</html>
+
+

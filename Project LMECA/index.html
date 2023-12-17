@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="./style.css" type="text/css">
         <script type="text/javascript" src="mesh_small.json"></script>
 		<script type="text/javascript" src="nodes_coarse.json"></script>
+		<script type="text/javascript" src="teste.json"></script>
 		<script type="text/javascript" src="app.js"></script>
         <script src="https://unpkg.com/robust-predicates@3.0.1/umd/predicates.min.js"></script>
 	</head>
@@ -54,7 +55,7 @@
 		<script>
             const canvas1 = document.getElementById("canvas1");
 			const canvas2 = document.getElementById("canvas2");
-			mesh = create_mesh2(nodeData);
+			mesh = create_mesh2(nodeData2);
 			
             const clear1Button = document.getElementById("clear1Button");
             const clear2Button = document.getElementById("clear2Button");
@@ -91,11 +92,7 @@
 
 				// Draw your content here
 				ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
-				draw_mesh2(mesh, canvas1);
-				//const [x, y, r] = circumcenter(mesh.nodes[0].pos, mesh.nodes[1].pos, mesh.nodes[2].pos);
-				//draw_circle(x, y, r, canvas1);
-				super_triangle(mesh, canvas1);
-				
+				draw_mesh2(mesh, canvas1);		
 			}
 
 			function zoomIn() {

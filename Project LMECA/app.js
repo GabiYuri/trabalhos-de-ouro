@@ -1,4 +1,4 @@
-/* NUMERICAL GEOMETRY - Assignment 2
+/* NUMERICAL GEOMETRY - Project
 Gabriel de Morais Pires
 Gabriela Ishikawa */
 
@@ -76,7 +76,6 @@ function create_mesh(mesh_data) {
 	}
 	return mesh;
 }
-
 
 function create_mesh2(nodeData) {
 	// Initialize data structure of a doubly-connected edge list
@@ -277,8 +276,6 @@ function super_triangle(mesh, canvas) {
 
 
 }
-
-
 
 /**
  * @brief           Clear all elements in the desired canvas

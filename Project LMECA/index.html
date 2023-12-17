@@ -2,7 +2,7 @@
 <html lang="en">
 
 	<head>
-		<title>Homework 2</title>
+		<title>Project</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="./style.css" type="text/css">
         <script type="text/javascript" src="mesh_small.json"></script>
@@ -54,10 +54,13 @@
 		<script>
             const canvas1 = document.getElementById("canvas1");
 			const canvas2 = document.getElementById("canvas2");
-			//mesh = create_mesh2(nodeData);
-			mesh = create_mesh(mesh_data);
-			flipEdge(mesh.edges[40]);
-
+			mesh = create_mesh2(nodeData);
+			
+			// find the convexHull given an array of points
+			convexVertex = findConvex(mesh);
+			create_random_triangles(mesh, convexVertex);
+			
+			
             const clear1Button = document.getElementById("clear1Button");
             const clear2Button = document.getElementById("clear2Button");
             const switchButton = document.getElementById("switchButton");
@@ -93,8 +96,10 @@
 
 				// Draw your content here
 				ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
-				draw_mesh(mesh, canvas1);	
+				draw_mesh2(mesh, canvas1);		
 			}
+
+			
 
 			function zoomIn() {
 				scale += 0.1;
@@ -147,6 +152,7 @@
 
 			// Initial draw
 			draw();
+			
 
 			
 

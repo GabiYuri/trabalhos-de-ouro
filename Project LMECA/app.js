@@ -2,80 +2,63 @@
 Gabriel de Morais Pires
 Gabriela Ishikawa */
 
-function create_mesh(mesh_data) {
-	// Initialize data structure of a doubly-connected edge list
-	mesh = {
-		nodes: [],
-		faces: [],
-		edges: []
-	};
+// ===========================================
+// =============== FLIP EDGE ================
+// ===========================================
 
-	// Mesh data from json file
-	node_data = mesh_data.Nodes[0];			// nodes - Coordinates, Indices
-	elem_data = mesh_data.Elements[1];		// triangles - Indices, Name, NodalConnectivity, Type = 2
 
-	// Create nodes
-	for (let i = 0; i < node_data.Indices.length; i++){
-		// node structure
-		node = {
-			id: node_data.Indices[i],
-			pos: node_data.Coordinates[i]
-		};
-		// add node to mesh.nodes array
-		mesh.nodes.push(node);
-	}
+function flipEdge(edgeToFlip) {
+    if (!edgeToFlip || !edgeToFlip.oppo) {
+        console.log("Edge cannot be flipped.");
+        return;
+    }
 
-	// Create faces
-	nodePairToEdge = {};
-	for (let i = 0; i < elem_data.Indices.length; i++) {
-		// face structure
-		face = {
-			id: elem_data.Indices[i],
-			incidentEdge: null		//TODO
-		};
-		// add face to mesh.faces array
-		mesh.faces.push(face)
+    let originalEdge = edgeToFlip;
+	let originalnext = originalEdge.next;
+	let originalnextnext = originalEdge.next.next;
 
-		// Create 3 half-edges for each triangle
-		face_nodes = elem_data.NodalConnectivity[i];		// triangle nodes
-		
-		face_edges = [];
-		for (let j = 0; j < face_nodes.length; j++){
-			edge = {
-				orig: mesh.nodes[face_nodes[(j+1)%3]],
-				dest: mesh.nodes[face_nodes[j]],
-				incidentFace: face,
-				next: null,
-				oppo: null
-			};
-			face_edges.push(edge);
+    let oppositeEdge = edgeToFlip.oppo;
+	let oppositenext = oppositeEdge.next;
+	let oppositenextnext = oppositeEdge.next.next;
 
-			// Determine the connectivity of the half-edges
-			if ([edge.dest.id, edge.orig.id] in nodePairToEdge) {
-				edge.oppo = nodePairToEdge[[edge.dest.id, edge.orig.id]];
-				nodePairToEdge[[edge.dest.id, edge.orig.id]].oppo = edge;
-			} else nodePairToEdge[[edge.orig.id, edge.dest.id]] = edge;
-		}
+    let FaceA = originalEdge.incidentFace;
+    let FaceB = oppositeEdge.incidentFace;
 
-		// define incidentEdge
-		face.incidentEdge = face_edges[0]
+    // Identify the four involved vertices
+    let leftVertex = originalEdge.next.dest;
+    let rightVertex = oppositeEdge.next.dest;
 
-		// define edge.next
-		for (let j = 0; j < face_nodes.length; j++){
-			face_edges[(j+1)%3].next = face_edges[j];
+    // Update the edge connectivity
+    originalEdge.orig = leftVertex;
+    originalEdge.dest = rightVertex;
 
-		}
-	}
+    oppositeEdge.orig = rightVertex;
+    oppositeEdge.dest = leftVertex;
 
-	// add edges to mesh.edges array
-	for (edgeName in nodePairToEdge) {
-		if (nodePairToEdge.hasOwnProperty(edgeName)) {
-		  edge = nodePairToEdge[edgeName];
-		  mesh.edges.push(edge);
-		}
-	}
-	return mesh;
+	// Update face connectivity
+    FaceA.incidentEdge = originalEdge;
+    FaceB.incidentEdge = oppositeEdge;
+	
+    // Update next pointers for all edges of both triangles
+    originalEdge.next = oppositenextnext;
+    oppositeEdge.next = originalnextnext;
+	
+    originalEdge.next.next = originalnext;
+	oppositeEdge.next.next = oppositenext;
+
+	originalEdge.next.next.next = originalEdge;
+	oppositeEdge.next.next.next = oppositeEdge;
+
+	originalEdge.next.incidentFace = FaceA;
+	oppositeEdge.next.incidentFace = FaceB;
+
 }
+
+
+
+// ===========================================
+// =========== SWEEP LINE ====================
+// ===========================================
 
 function create_mesh2(nodeData) {
 	// Initialize data structure of a doubly-connected edge list
@@ -112,59 +95,6 @@ function draw_mesh2(mesh, canvas) {
 	for (node of mesh.nodes) {
 		draw_point(node.pos[0], node.pos[1], canvas, color="midnightblue", label=node.id.toString());
 	}
-}
-
-function draw_mesh(mesh, canvas) {
-	size_adapt(canvas, mesh.nodes, offset=0);
-
-	// Draw triangles
-	context = canvas.getContext('2d');
-	context.strokeStyle = "steelblue";
-	for (face of mesh.faces) {
-		edge = face.incidentEdge;
-		face_nodes = [edge.orig.pos, edge.dest.pos, edge.next.dest.pos];
-		context.beginPath();
-		context.lineWidth = 1;
-		context.moveTo(face_nodes[0][0], face_nodes[0][1]);
-		context.lineTo(face_nodes[1][0], face_nodes[1][1]);
-		context.lineTo(face_nodes[2][0], face_nodes[2][1]);
-		context.stroke();
-	}
-}
-
-function size_adapt(canvas, nodes, offset, margin=0) {
-    // bounding box of the mesh
-    let xMin = Number.MAX_VALUE;
-    let yMin = Number.MAX_VALUE;
-    let xMax = Number.MIN_VALUE;
-    let yMax = Number.MIN_VALUE;
-
-    for (node of nodes) {
-        xMax = Math.max(xMax, node.pos[0]);
-        xMin = Math.min(xMin, node.pos[0]);
-        yMax = Math.max(yMax, node.pos[1]);
-        yMin = Math.min(yMin, node.pos[1]);
-    }
-
-    // Increase bounding box with a margin
-    xMin -= margin;
-    yMin -= margin;
-    xMax += margin;
-    yMax += margin;
-
-    const xRange = xMax - xMin;
-    const yRange = yMax - yMin;
-    const scale = Math.min(canvas.width / xRange, canvas.height / yRange);
-
-    // Transform node positions based on the adjusted bounding box and the offset
-    for (node of nodes)
-        node.pos = transform(node.pos, scale, xMin, yMin, offset);
-
-    return { scale: scale, xMin: xMin, yMin: yMin };
-}
-
-function transform(pos, scale, xMin, yMin, offset) {
-    return [offset+(pos[0]-xMin)*scale, offset+(pos[1]-yMin)*scale];
 }
 
 // Create a function that, for three points, returns the circumcenter and the circumradius
@@ -276,6 +206,146 @@ function super_triangle(mesh, canvas) {
 
 
 }
+
+
+
+// ===========================================
+// =========== BASIC FUNCTIONS ===============
+// ===========================================
+
+
+
+function create_mesh(mesh_data) {
+	// Initialize data structure of a doubly-connected edge list
+	mesh = {
+		nodes: [],
+		faces: [],
+		edges: []
+	};
+
+	// Mesh data from json file
+	node_data = mesh_data.Nodes[0];			// nodes - Coordinates, Indices
+	elem_data = mesh_data.Elements[1];		// triangles - Indices, Name, NodalConnectivity, Type = 2
+
+	// Create nodes
+	for (let i = 0; i < node_data.Indices.length; i++){
+		// node structure
+		node = {
+			id: node_data.Indices[i],
+			pos: node_data.Coordinates[i]
+		};
+		// add node to mesh.nodes array
+		mesh.nodes.push(node);
+	}
+
+	// Create faces
+	nodePairToEdge = {};
+	for (let i = 0; i < elem_data.Indices.length; i++) {
+		// face structure
+		face = {
+			id: elem_data.Indices[i],
+			incidentEdge: null		//TODO
+		};
+		// add face to mesh.faces array
+		mesh.faces.push(face)
+
+		// Create 3 half-edges for each triangle
+		face_nodes = elem_data.NodalConnectivity[i];		// triangle nodes
+		
+		face_edges = [];
+		for (let j = 0; j < face_nodes.length; j++){
+			edge = {
+				orig: mesh.nodes[face_nodes[(j+1)%3]],
+				dest: mesh.nodes[face_nodes[j]],
+				incidentFace: face,
+				next: null,
+				oppo: null
+			};
+			face_edges.push(edge);
+
+			// Determine the connectivity of the half-edges
+			if ([edge.dest.id, edge.orig.id] in nodePairToEdge) {
+				edge.oppo = nodePairToEdge[[edge.dest.id, edge.orig.id]];
+				nodePairToEdge[[edge.dest.id, edge.orig.id]].oppo = edge;
+			} else nodePairToEdge[[edge.orig.id, edge.dest.id]] = edge;
+		}
+
+		// define incidentEdge
+		face.incidentEdge = face_edges[0]
+
+		// define edge.next
+		for (let j = 0; j < face_nodes.length; j++){
+			face_edges[(j+1)%3].next = face_edges[j];
+
+		}
+	}
+
+	// add edges to mesh.edges array
+	for (edgeName in nodePairToEdge) {
+		if (nodePairToEdge.hasOwnProperty(edgeName)) {
+		  edge = nodePairToEdge[edgeName];
+		  mesh.edges.push(edge);
+		}
+	}
+	return mesh;
+}
+
+
+function draw_mesh(mesh, canvas) {
+	size_adapt(canvas, mesh.nodes, offset=0);
+
+	// Draw triangles
+	context = canvas.getContext('2d');
+	context.strokeStyle = "steelblue";
+	for (edge of mesh.edges) {
+		// edge = face.incidentEdge;
+		face_nodes = [edge.orig.pos, edge.next.orig.pos, edge.next.next.orig.pos];
+		context.beginPath();
+		context.lineWidth = 1;
+		context.moveTo(face_nodes[0][0], face_nodes[0][1]);
+		context.lineTo(face_nodes[1][0], face_nodes[1][1]);
+		context.lineTo(face_nodes[2][0], face_nodes[2][1]);
+		context.stroke();
+	}
+}
+
+
+function size_adapt(canvas, nodes, offset, margin=0) {
+    // bounding box of the mesh
+    let xMin = Number.MAX_VALUE;
+    let yMin = Number.MAX_VALUE;
+    let xMax = Number.MIN_VALUE;
+    let yMax = Number.MIN_VALUE;
+
+    for (node of nodes) {
+        xMax = Math.max(xMax, node.pos[0]);
+        xMin = Math.min(xMin, node.pos[0]);
+        yMax = Math.max(yMax, node.pos[1]);
+        yMin = Math.min(yMin, node.pos[1]);
+    }
+
+    // Increase bounding box with a margin
+    xMin -= margin;
+    yMin -= margin;
+    xMax += margin;
+    yMax += margin;
+
+    const xRange = xMax - xMin;
+    const yRange = yMax - yMin;
+    const scale = Math.min(canvas.width / xRange, canvas.height / yRange);
+
+    // Transform node positions based on the adjusted bounding box and the offset
+    for (node of nodes)
+        node.pos = transform(node.pos, scale, xMin, yMin, offset);
+
+    return { scale: scale, xMin: xMin, yMin: yMin };
+}
+
+
+function transform(pos, scale, xMin, yMin, offset) {
+    return [offset+(pos[0]-xMin)*scale, offset+(pos[1]-yMin)*scale];
+}
+
 
 /**
  * @brief           Clear all elements in the desired canvas

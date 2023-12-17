@@ -7,7 +7,6 @@
 		<link rel="stylesheet" href="./style.css" type="text/css">
         <script type="text/javascript" src="mesh_small.json"></script>
 		<script type="text/javascript" src="nodes_coarse.json"></script>
-		<script type="text/javascript" src="teste.json"></script>
 		<script type="text/javascript" src="app.js"></script>
         <script src="https://unpkg.com/robust-predicates@3.0.1/umd/predicates.min.js"></script>
 	</head>
@@ -38,7 +37,7 @@
 			  <h2>Segment Intersection with Triangulation</h2>
 			  <p>
 				This implementation shows the mesh provided by the JSON file and locate the triangle that contains the  
-				point clicked on in the canvas by filling it and identifing the face.id. 
+				point clicked on in the canvas by filling it and identifWing the face.id. 
 			  </p>
 			  <p>If you want to clear the canvas, click in "Clear Canvas" button:</p>
 			  <div style="display:flex; flex-direction: column;">
@@ -55,8 +54,10 @@
 		<script>
             const canvas1 = document.getElementById("canvas1");
 			const canvas2 = document.getElementById("canvas2");
-			mesh = create_mesh2(nodeData2);
-			
+			//mesh = create_mesh2(nodeData);
+			mesh = create_mesh(mesh_data);
+			flipEdge(mesh.edges[40]);
+
             const clear1Button = document.getElementById("clear1Button");
             const clear2Button = document.getElementById("clear2Button");
             const switchButton = document.getElementById("switchButton");
@@ -92,7 +93,7 @@
 
 				// Draw your content here
 				ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
-				draw_mesh2(mesh, canvas1);		
+				draw_mesh(mesh, canvas1);	
 			}
 
 			function zoomIn() {

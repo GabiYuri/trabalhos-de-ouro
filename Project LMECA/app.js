@@ -277,6 +277,160 @@ function super_triangle(mesh, canvas) {
 
 }
 
+// for finding the convex hull
+function orientation(p, q, r) {
+    var r = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1]);
+    if (r == 0) return 0;
+    return (r > 0) ? 1 : -1;
+}
+
+function distance(a, b) {
+    var res = ((b[0] - a[0]) ** 2) + ((b[1] - a[1]) ** 2);
+    res = Math.sqrt(res);
+    return res; 
+}
+
+function compare(a, b) { 
+    var p = bottomMost;
+    var o = orientation(p, a, b); 
+    if (o == 0) 
+        return (distance(p, b) >= distance(p, a))? -1 : 1; 
+   return (o == -1)? -1: 1; 
+}
+
+function findConvex(mesh) {
+	
+	points = mesh.nodes.map(node => node.pos);
+
+	// sort by y-axis values
+	points.sort(function(a, b) {return a[1] - b[1]});
+    bottomMost = points[0];
+    points.splice(0, 1);
+
+	// separates from bottom and top half
+	points.sort(compare);
+    points.unshift(bottomMost);
+
+    // get 2 points to start comparing
+    var stack = [points[0], points[1]];
+    var tracker = 2;
+    var count = 2;
+    while(true) {
+        var check = false;
+        if (tracker == (points.length)) {
+            break;
+        }
+        if (orientation(stack[count - 2], stack[count - 1], points[tracker]) == -1) {
+            stack.push(points[tracker]);
+            count++;
+        } else {
+            count--;
+            stack.pop();
+            check = true;
+        }
+        var s = stack.slice();
+        
+        if (!check) {
+            tracker++;
+        }
+    }
+
+	var convexVertex = [];
+	for (let i = 0; i < stack.length; i++) {
+		id = mesh.nodes.map(node => node.pos).findIndex(element => element === stack[i]);
+		convexVertex.push(mesh.nodes[id]);
+	}
+
+	// make it counterclockwise
+	convexVertex.reverse();
+    return convexVertex;
+}
+
+function drawConvex(convexVertex, canvas) {
+	for (let i = 0; i < convexVertex.length - 1; i++) {
+		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas);
+	}
+	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas);
+}
+
+function create_random_triangles(mesh, convexVertex) {
+	// get first node to triangulate
+	missingNodes = mesh.nodes.filter(element => !convexVertex.includes(element));
+	node = missingNodes[0];
+
+	for (let i = 0; i < convexVertex.length; i++) {
+		// create edges of convex hull
+		face = {
+			id: i,
+			incidentEdge: null
+		};
+
+		edge = {
+			orig: convexVertex[i],
+			dest: convexVertex[(i+1)%convexVertex.length],
+			incidentFace: face,
+			next: null,
+			oppo: null
+		};
+
+		face.incidentEdge = edge;
+
+		mesh.edges.push(edge);
+		mesh.faces.push(face);
+	}
+
+	edge = {
+		orig: node,
+		dest: mesh.edges[0].orig,
+		incidentFace: mesh.faces[0],
+		next: mesh.edges[0],
+		oppo: null
+	};
+
+	edge_oppo = {
+		orig: mesh.edges[0].orig,
+		dest: node,
+		incidentFace: mesh.faces[mesh.faces.length-1],
+		next: null,
+		oppo: edge
+	};
+
+	edge.oppo = edge_oppo;
+	mesh.faces[mesh.faces.length-1].incidentEdge.next = edge_oppo;
+	mesh.edges.push(edge);
+
+
+	for (let i = convexVertex.length - 1; i > 0; i--) {
+
+		last_oppo = edge.oppo
+
+		edge = {
+			orig: node,
+			dest: convexVertex[i],
+			incidentFace: mesh.faces[i],
+			next: mesh.edges[i],
+			oppo: null
+		};
+		last_oppo.next = edge;
+
+		edge_oppo = {
+			orig: convexVertex[i],
+			dest: node,
+			incidentFace: mesh.faces[i-1],
+			next: null,
+			oppo: edge
+		};
+		edge.oppo = edge_oppo;
+		mesh.faces[i-1].incidentEdge.next = edge_oppo;
+		mesh.edges.push(edge);
+		mesh.edges.push(last_oppo);
+	}
+
+	edge_oppo.next = mesh.edges[convexVertex.length];
+	mesh.edges.push(edge_oppo);
+
+}
+
 /**
  * @brief           Clear all elements in the desired canvas
  * @param canvas    selected canvas

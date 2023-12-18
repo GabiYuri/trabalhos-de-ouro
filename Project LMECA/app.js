@@ -3,7 +3,7 @@ Gabriel de Morais Pires
 Gabriela Ishikawa */
 
 // ===========================================
-// =============== FLIP EDGE ================
+// =============== FLIP EDGE =================
 // ===========================================
 
 async function flipAlgorithm() {
@@ -324,27 +324,60 @@ function super_triangle(mesh, canvas) {
 
 }
 
+// ===========================================
+// =============== CONVEX HULL ===============
+// ===========================================
+
 // for finding the convex hull
-function orientation(p, q, r) {
-    var r = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1]);
-    if (r == 0) return 0;
-    return (r > 0) ? 1 : -1;
+
+/**
+ * @brief           Calculates the cross-product between the vector to get orientation
+ * @param A        	xy-coordinate of A
+ * @param B        	xy-coordinate of B   
+ * @param C        	xy-coordinate of C
+ * @returns         1: counterclockwise; 0: collinear; -1: clockwise;
+ */
+function get_orientation(A, B, C) {
+    // positive determinant
+    if (((C[1] - A[1])*(B[0] - A[0])) > ((B[1] - A[1])*(C[0] - A[0]))) return 1; 
+    // nolinear points
+    else if (((C[1] - A[1])*(B[0] - A[0])) == ((B[1] - A[1])*(C[0] - A[0]))) return 0; 
+    // negative determinant
+    return -1;
 }
 
-function distance(a, b) {
-    var res = ((b[0] - a[0]) ** 2) + ((b[1] - a[1]) ** 2);
+/**
+ * @brief 			Calculates the distance between two points
+ * @param A        	xy-coordinate of A
+ * @param B        	xy-coordinate of B   
+ * @returns 		distance between A and B
+ */
+function distance(A, B) {
+    var res = ((B[0] - A[0]) ** 2) + ((B[1] - A[1]) ** 2);
     res = Math.sqrt(res);
-    return res; 
+    return res;
 }
 
-function compare(a, b) { 
+
+/**
+ * @brief			Comparison based on the orientation of the points and position
+ * @param A        	xy-coordinate of A
+ * @param B        	xy-coordinate of B   
+ * @returns 		1: A is closer to bottomMost; -1: B is closer to bottomMost; if collinear, the closest to bottomMost
+ */
+function compare(A, B) { 
     var p = bottomMost;
-    var o = get_orientation(p, a, b); 
+    var o = get_orientation(p, A, B); 
     if (o == 0) 
-        return (distance(p, b) >= distance(p, a))? -1 : 1; 
-   return (o == -1)? -1: 1; 
+        return (distance(p, B) >= distance(p, A))? -1 : 1; 
+    return (o == -1)? -1: 1; 
 }
 
+/**
+ * @brief			Find the convex hull given the mesh.nodes
+ * @param mesh		mesh structure as doubly-connected edge list
+ * @returns 		Array of vertices of the convex hull
+ */
 function findConvex(mesh) {
 	
 	points = mesh.nodes.map(node => node.pos);
@@ -393,6 +426,12 @@ function findConvex(mesh) {
     return convexVertex;
 }
 
+
+/**
+ * @brief					Draw the outline of the convex hull
+ * @param convexVertex 		Array of vertices of the convex hull
+ * @param canvas 			selected canvas
+ */
 function drawConvex(convexVertex, canvas) {
 	for (let i = 0; i < convexVertex.length - 1; i++) {
 		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas);
@@ -400,87 +439,78 @@ function drawConvex(convexVertex, canvas) {
 	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas);
 }
 
+
+/**
+ * @brief 					Triangulate the convex hull with one point inside
+ * @param mesh 				mesh structure as doubly-connected edge list
+ * @param convexVertex 		array of vertices of the convex hull
+ * @returns 				array of points to triangulate
+ */
 function create_big_triangles(mesh, convexVertex) {
+
+	// get the max and min x and y values of the convex hull
+	let xMin = Number.MAX_VALUE;
+	let yMin = Number.MAX_VALUE;
+	let xMax = Number.MIN_VALUE;
+	let yMax = Number.MIN_VALUE;
+	for (node of convexVertex) {
+		xMin = Math.min(xMin, node.pos[0]);
+		yMin = Math.min(yMin, node.pos[1]);
+		xMax = Math.max(xMax, node.pos[0]);
+		yMax = Math.max(yMax, node.pos[1]);
+	}
+
+	// get the middle point of the convex hull
+	const middleConvex = [(xMin + xMax)/2, (yMin + yMax)/2];
+	
 	// get first node to triangulate
 	missingNodes = mesh.nodes.filter(element => !convexVertex.includes(element));
-
-	middleCanvas = [canvas1.width/2, canvas1.height/2];
-
-	// sort by distance to the middle of the canvas
-	missingNodes.sort(function(a, b) {return distance(middleCanvas, a.pos) - distance(middleCanvas, b.pos)});
-
+	missingNodes.sort(function(a, b) {return distance(middleConvex, a.pos) - distance(middleConvex, b.pos)});
 	node = missingNodes[0];
 
+	nodePairToEdge = {};
 	for (let i = 0; i < convexVertex.length; i++) {
 		// create edges of convex hull
 		face = {
 			id: i,
 			incidentEdge: null
 		};
-
-		edge = {
-			orig: convexVertex[i],
-			dest: convexVertex[(i+1)%convexVertex.length],
-			incidentFace: face,
-			next: null,
-			oppo: null
-		};
-
-		face.incidentEdge = edge;
-
-		mesh.edges.push(edge);
 		mesh.faces.push(face);
+
+		face_nodes = [convexVertex[i], convexVertex[(i+1)%convexVertex.length], node];
+		face_edges = [];
+		for (let j = 0; j < face_nodes.length; j++){
+			edge = {
+				orig: face_nodes[j],
+				dest: face_nodes[(j+1)%3],
+				incidentFace: face,
+				next: null,
+				oppo: null
+			};
+			face_edges.push(edge);
+
+			// Determine the connectivity of the half-edges
+			if ([edge.dest.id, edge.orig.id] in nodePairToEdge) {
+				edge.oppo = nodePairToEdge[[edge.dest.id, edge.orig.id]];
+				nodePairToEdge[[edge.dest.id, edge.orig.id]].oppo = edge;
+			} else nodePairToEdge[[edge.orig.id, edge.dest.id]] = edge;
+		}
+
+		// define incidentEdge
+		face.incidentEdge = face_edges[0];
+
+		// define edge.next
+		for (let j = 0; j < face_nodes.length; j++){
+			face_edges[j].next = face_edges[(j+1)%3];
+		}
 	}
 
-	edge = {
-		orig: node,
-		dest: mesh.edges[0].orig,
-		incidentFace: mesh.faces[0],
-		next: mesh.edges[0],
-		oppo: null
-	};
-
-	edge_oppo = {
-		orig: mesh.edges[0].orig,
-		dest: node,
-		incidentFace: mesh.faces[mesh.faces.length-1],
-		next: null,
-		oppo: edge
-	};
-
-	edge.oppo = edge_oppo;
-	mesh.faces[mesh.faces.length-1].incidentEdge.next = edge_oppo;
-	mesh.edges.push(edge);
-
-
-	for (let i = convexVertex.length - 1; i > 0; i--) {
-
-		last_oppo = edge.oppo
-
-		edge = {
-			orig: node,
-			dest: convexVertex[i],
-			incidentFace: mesh.faces[i],
-			next: mesh.edges[i],
-			oppo: null
-		};
-		last_oppo.next = edge;
-
-		edge_oppo = {
-			orig: convexVertex[i],
-			dest: node,
-			incidentFace: mesh.faces[i-1],
-			next: null,
-			oppo: edge
-		};
-		edge.oppo = edge_oppo;
-		mesh.faces[i-1].incidentEdge.next = edge_oppo;
-		mesh.edges.push(edge);
-		mesh.edges.push(last_oppo);
+	for (edgeName in nodePairToEdge) {
+		if (nodePairToEdge.hasOwnProperty(edgeName)) {
+		  edge = nodePairToEdge[edgeName];
+		  mesh.edges.push(edge);
+		}
 	}
-
-	edge_oppo.next = mesh.edges[convexVertex.length];
-	mesh.edges.push(edge_oppo);
 
 	missingNodes.splice(0, 1);
 	return missingNodes;
@@ -490,6 +520,7 @@ function create_big_triangles(mesh, convexVertex) {
 function create_new_triangle(point, mesh, canvas) {
 	
 	inTriangle = find_triangle_location2(point, mesh, canvas);
+	triangle_nodes = [inTriangle.incidentEdge.orig.pos, inTriangle.incidentEdge.dest.pos, inTriangle.incidentEdge.next.dest.pos];
 
 	// create new triangles
 	new_tri1 = {
@@ -511,6 +542,7 @@ function create_new_triangle(point, mesh, canvas) {
 
 	newEdgeId = mesh.edges.length;
 
+	nodePairToEdge = {};
 	for (triangle of triangles) {
 		e0 = triangle.incidentEdge;
 		e1 = {
@@ -527,20 +559,28 @@ function create_new_triangle(point, mesh, canvas) {
 			next: e0,
 			oppo: null
 		};
+
 		e1.next = e2;
 		e0.next = e1;
-		mesh.edges.push(e1);
-		mesh.edges.push(e2);
+
+		// Determine the connectivity of the half-edges
+		if ([e1.dest.id, e1.orig.id] in nodePairToEdge) {
+			e1.oppo = nodePairToEdge[[e1.dest.id, e1.orig.id]];
+			nodePairToEdge[[e1.dest.id, e1.orig.id]].oppo = e1;
+		} else nodePairToEdge[[e1.orig.id, e1.dest.id]] = e1;
+
+		if ([e2.dest.id, e2.orig.id] in nodePairToEdge) {
+			e2.oppo = nodePairToEdge[[e2.dest.id, e2.orig.id]];
+			nodePairToEdge[[e2.dest.id, e2.orig.id]].oppo = e2;
+		} else nodePairToEdge[[e2.orig.id, e2.dest.id]] = e2;
 	}
 
-	// link new edges
-	mesh.edges[newEdgeId].oppo = mesh.edges[newEdgeId+3];
-	mesh.edges[newEdgeId+3].oppo = mesh.edges[newEdgeId];
-	mesh.edges[newEdgeId+1].oppo = mesh.edges[newEdgeId+4];
-	mesh.edges[newEdgeId+4].oppo = mesh.edges[newEdgeId+1];
-	mesh.edges[newEdgeId+2].oppo = mesh.edges[newEdgeId+5];
-	mesh.edges[newEdgeId+5].oppo = mesh.edges[newEdgeId+2];
-	
+	for (edgeName in nodePairToEdge) {
+		if (nodePairToEdge.hasOwnProperty(edgeName)) {
+		  edge = nodePairToEdge[edgeName];
+		  mesh.edges.push(edge);
+		}
+	}	
 }
 
 function triangulate(nodes, canvas) {
@@ -1032,21 +1072,7 @@ function check_overlap(A, B, C, D) {
 }
 
 
-/**
- * @brief           Calculates the cross-product between the vector to get orientation
- * @param A        	xy-coordinate of A
- * @param B        	xy-coordinate of B   
- * @param C        	xy-coordinate of C
- * @returns         1: counterclockwise; 0: collinear; -1: clockwise;
- */
-function get_orientation(A, B, C) {
-    // positive determinant
-    if (((C[1] - A[1])*(B[0] - A[0])) > ((B[1] - A[1])*(C[0] - A[0]))) return 1; 
-    // nolinear points
-    else if (((C[1] - A[1])*(B[0] - A[0])) == ((B[1] - A[1])*(C[0] - A[0]))) return 0; 
-    // negative determinant
-    return -1;
-}
+
 
 
 /**

@@ -55,17 +55,17 @@
             const canvas1 = document.getElementById("canvas1");
 			const canvas2 = document.getElementById("canvas2");
 			// mesh = create_mesh2(nodeData);
-			mesh = create_mesh(mesh_data);		
-			
-			flipEdge(mesh.edges[6]);
+			//mesh = create_mesh(mesh_data);		
+			//flipEdge(mesh.edges[6]);
+			//draw_mesh(mesh, canvas1);
+			//flipEdge(mesh.edges[10]);
 
-
-			draw_mesh(mesh, canvas1);
 
 			// find the convexHull given an array of points
-			// convexVertex = findConvex(mesh);
-			// create_random_triangles(mesh, convexVertex);
-			
+			mesh = triangulate(nodeData, canvas1);
+			size_adapt(canvas1, mesh.nodes, offset=0);
+			draw_mesh(mesh, canvas1);
+
 			
             const clear1Button = document.getElementById("clear1Button");
             const clear2Button = document.getElementById("clear2Button");

@@ -8,8 +8,12 @@ Gabriela Ishikawa */
 
 
 function flipEdge(edgeToFlip) {
+
+	clear_canvas(canvas1);
+
     if (!edgeToFlip || !edgeToFlip.oppo) {
         console.log("Edge cannot be flipped.");
+		draw_mesh(mesh, canvas1);
         return;
     }
 
@@ -27,13 +31,25 @@ function flipEdge(edgeToFlip) {
     // Identify the four involved vertices
     let leftVertex = originalEdge.next.dest;
     let rightVertex = oppositeEdge.next.dest;
+
+	let topVertex = originalEdge.dest;
+    let bottomVertex = oppositeEdge.dest;
+
+	console.log(leftVertex.pos, rightVertex.pos, topVertex.pos, bottomVertex.pos);
+
+
+	if (check_intersection(leftVertex.pos, rightVertex.pos, topVertex.pos, bottomVertex.pos) != 1) {
+        console.warn("Warning: The two pairs of triangles do not form a convex quadrilateral.");
+		draw_mesh(mesh, canvas1);
+        return;
+    }
 	
     // Update the edge connectivity
     originalEdge.orig = leftVertex;
     originalEdge.dest = rightVertex;
 
     oppositeEdge.orig = rightVertex;
-    oppositeEdge.dest = leftVertex;
+    oppositeEdge.dest = leftVertex;	
 
     // Update next pointers for all edges of both triangles
     originalEdge.next = oppositenextnext;
@@ -51,6 +67,8 @@ function flipEdge(edgeToFlip) {
 
 	originalEdge.next.incidentFace = FaceA;
 	oppositeEdge.next.incidentFace = FaceB;
+
+	draw_mesh(mesh, canvas1);
 }
 
 
@@ -977,7 +995,7 @@ function get_orientation(A, B, C) {
  * @param C        	xy-coordinate of C
  * @param D        	xy-coordinate of D
  * @returns         1: concurrent lines with intersection; 0: collinear lines without overlap or
- *                  concurrent lines without intersection -1: conllinear lines with intersection;
+ *                  concurrent lines without intersection -1: collinear lines with intersection;
  */
 function check_intersection(A, B, C, D) {
     var d1 = get_orientation(A, B, C);

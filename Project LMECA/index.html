@@ -55,11 +55,10 @@
             const canvas1 = document.getElementById("canvas1");
 			const canvas2 = document.getElementById("canvas2");
 			// mesh = create_mesh2(nodeData);
-			//mesh = create_mesh(mesh_data);		
-			//flipEdge(mesh.edges[6]);
-			//draw_mesh(mesh, canvas1);
-			//flipEdge(mesh.edges[10]);
-
+			mesh = create_mesh(mesh_data);		
+			
+			flipAlgorithm();
+			
 
 			// find the convexHull given an array of points
 			mesh = triangulate(nodeData, canvas1);

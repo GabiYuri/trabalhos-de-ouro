@@ -23,54 +23,75 @@ async function flipAlgorithm() {
 
 		// Pop the top edge from the stack
 		let edge = stack.pop();
+		console.log("I'm checking the edge between", edge.orig.id, "and", edge.dest.id, ".")
 		
+		// For visualiation purposes
 		clear_canvas(canvas1);
 		draw_mesh(mesh, canvas1);
-		// print edge in red
 		draw_edge(edge.orig.pos, edge.dest.pos, canvas1, color="red");
-
 		await waitOneSecond();
 
+		
 		// If the edge is not Delaunay, flip it and add the new edges to the stack
 		if (!isDelaunay(edge)) {
+			await waitOneSecond();
 			console.log("This edge is not Delaunay.")
 			clear_canvas(canvas1);
-			flipEdge(edge);
+			const wasflipped = flipEdge(edge);
 			draw_mesh(mesh, canvas1);
-			stack.push(edge.next);
-			stack.push(edge.next.next);
-			stack.push(edge.oppo.next);
-			stack.push(edge.oppo.next.next);
+
+			// if was flipped, add the new edges to the stack, but check if they are not already there
+			if (wasflipped) {
+				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Aqui1")};
+				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};
+				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Aqui3")};
+				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Aqui4")}
+			}
 		}
+
 
 		// iF the edge is Delaunay, remove it from the stack
 		else {
+			await waitOneSecond();
 			console.log("This edge is Delaunay.");
 			//stack.splice(stack.indexOf(edge), 1);
 		} 
 
-		await waitOneSecond();
+		// Pause the code while the user doesnt click on the canvas
+		// Pause execution until the canvas is clicked again
+        await new Promise(resolve => {
+            canvas1.addEventListener('click', function clickHandler() {
+                // Remove the event listener to avoid multiple clicks
+                canvas1.removeEventListener('click', clickHandler);
+                
+                // Resume the loop
+                continueLoop = true;
+                resolve();
+            });
+
+            // Pause the loop
+            continueLoop = false;
+        });
 	}
 
 	console.log("Done!");
 }
 
 function waitOneSecond() {
-    return new Promise(resolve => setTimeout(resolve, 500));
+    return new Promise(resolve => setTimeout(resolve, 100));
 }
 
 
 // Function to check if an edge is Delaunay
-async function isDelaunay(edge) {
-    const A = edge.orig.pos; // Coordinates of the origin node of the edge
-    const B = edge.dest.pos; // Coordinates of the destination node of the edge
-    const face1 = edge.incidentFace;
-    const face2 = edge.oppo.incidentFace;
+function isDelaunay(edge) {
 
-    // Check if both faces exist (i.e., edge is on the convex hull)
-    if (!face1 || !face2) {
+	// Check if both faces exist (i.e., edge is on the convex hull)
+    if (!edge || !(edge.oppo)) {
         return true;
     }
+
+    const A = edge.orig.pos; // Coordinates of the origin node of the edge
+    const B = edge.dest.pos; // Coordinates of the destination node of the edge
 
     // Get the third vertex of each face (not on the edge)
     const C1 = edge.next.dest.pos;
@@ -91,23 +112,24 @@ async function isDelaunay(edge) {
 	draw_circle(xc1, yc1, rc1, canvas1);
 	draw_circle(xc2, yc2, rc2, canvas1);
 
-	await waitOneSecond();
-
     // If any circumcenter is null, the points are collinear and not Delaunay
     if (!xc1 || !yc1 || !rc1 || !xc2 || !yc2 || !rc2) {
         return false;
     }
 
-    // Check if C1 is inside the circumcircle of triangle A, B, C2
-	if (distance([xc2, yc2], C1) <= rc2) {
-		return false;
+    // Check if any point of the mesh is inside the circumcircle of A, B and C1
+	for (node of mesh.nodes) {
+			if (distance([xc1, yc1], node.pos) < rc1) {
+				return false;
+			}	
 	}
 
-	// Check if C2 is inside the circumcircle of triangle A, B, C1
-	if (distance([xc1, yc1], C2) <= rc1) {
-		return false;
+	// Check if any point of the mesh is inside the circumcircle of A, B and C2
+	for (node of mesh.nodes) {
+			if (distance([xc2, yc2], node.pos) < rc2) {
+				return false;
+			}
 	}
-
 	return true;
 }
 
@@ -115,7 +137,7 @@ function flipEdge(edgeToFlip) {
 
     if (!edgeToFlip || !edgeToFlip.oppo) {
         console.log("Edge cannot be flipped.");
-        return;
+        return 0;
     }
 
     let originalEdge = edgeToFlip;
@@ -138,7 +160,7 @@ function flipEdge(edgeToFlip) {
 
 	if (check_intersection(leftVertex.pos, rightVertex.pos, topVertex.pos, bottomVertex.pos) != 1) {
         console.log("Edge on concave polygon.");
-        return;
+        return 0;
     }
 	
     // Update the edge connectivity
@@ -164,6 +186,8 @@ function flipEdge(edgeToFlip) {
 
 	originalEdge.next.incidentFace = FaceA;
 	oppositeEdge.next.incidentFace = FaceB;
+
+	return 1;
 }
 
 // ===========================================

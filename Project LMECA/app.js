@@ -27,7 +27,7 @@ function flipEdge(edgeToFlip) {
     // Identify the four involved vertices
     let leftVertex = originalEdge.next.dest;
     let rightVertex = oppositeEdge.next.dest;
-
+	
     // Update the edge connectivity
     originalEdge.orig = leftVertex;
     originalEdge.dest = rightVertex;
@@ -35,10 +35,6 @@ function flipEdge(edgeToFlip) {
     oppositeEdge.orig = rightVertex;
     oppositeEdge.dest = leftVertex;
 
-	// Update face connectivity
-    FaceA.incidentEdge = originalEdge;
-    FaceB.incidentEdge = oppositeEdge;
-	
     // Update next pointers for all edges of both triangles
     originalEdge.next = oppositenextnext;
     oppositeEdge.next = originalnextnext;
@@ -49,9 +45,12 @@ function flipEdge(edgeToFlip) {
 	originalEdge.next.next.next = originalEdge;
 	oppositeEdge.next.next.next = oppositeEdge;
 
+	// Update face connectivity
+    FaceA.incidentEdge = originalEdge;
+    FaceB.incidentEdge = oppositeEdge;
+
 	originalEdge.next.incidentFace = FaceA;
 	oppositeEdge.next.incidentFace = FaceB;
-
 }
 
 
@@ -603,16 +602,18 @@ function draw_mesh(mesh, canvas) {
 	size_adapt(canvas, mesh.nodes, offset=0);
 
 	// Draw triangles
+
 	context = canvas.getContext('2d');
 	context.strokeStyle = "steelblue";
-	for (edge of mesh.edges) {
-		// edge = face.incidentEdge;
-		face_nodes = [edge.orig.pos, edge.next.orig.pos, edge.next.next.orig.pos];
+	for (face of mesh.faces) {
+		edge = face.incidentEdge;
+		face_nodes = [edge.orig.pos, edge.next.orig.pos, edge.next.next.orig.pos, edge.next.next.dest.pos];
 		context.beginPath();
 		context.lineWidth = 1;
 		context.moveTo(face_nodes[0][0], face_nodes[0][1]);
 		context.lineTo(face_nodes[1][0], face_nodes[1][1]);
 		context.lineTo(face_nodes[2][0], face_nodes[2][1]);
+		context.lineTo(face_nodes[3][0], face_nodes[3][1]);
 		context.stroke();
 	}
 }

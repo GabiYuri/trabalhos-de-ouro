@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="./style.css" type="text/css">
         <script type="text/javascript" src="mesh_small.json"></script>
 		<script type="text/javascript" src="nodes_coarse.json"></script>
+		<script type="text/javascript" src="teste.json"></script>
 		<script type="text/javascript" src="app.js"></script>
         <script src="https://unpkg.com/robust-predicates@3.0.1/umd/predicates.min.js"></script>
 	</head>
@@ -61,8 +62,8 @@
 			
 
 			// find the convexHull given an array of points
-			mesh = triangulate(nodeData, canvas1);
-			size_adapt(canvas1, mesh.nodes, offset=0);
+			mesh = triangulate(nodeData2, canvas1);
+			size_adapt(canvas1, mesh.nodes, offset=0, margin=0.1);
 			draw_mesh(mesh, canvas1);
 			flipAlgorithm();
 

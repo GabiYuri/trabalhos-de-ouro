@@ -36,11 +36,10 @@ async function flipAlgorithm() {
 		if (!isDelaunay(edge)) {
 			await waitOneSecond();
 			console.log("This edge is not Delaunay.")
-			clear_canvas(canvas1);
 			const wasflipped = flipEdge(edge);
 			draw_mesh(mesh, canvas1);
 
-			// if was flipped, add the new edges to the stack, but check if they are not already there
+			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
 			if (wasflipped) {
 				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Aqui1")};
 				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};
@@ -58,7 +57,6 @@ async function flipAlgorithm() {
 		} 
 
 		// Pause the code while the user doesnt click on the canvas
-		// Pause execution until the canvas is clicked again
         await new Promise(resolve => {
             canvas1.addEventListener('click', function clickHandler() {
                 // Remove the event listener to avoid multiple clicks
@@ -70,8 +68,8 @@ async function flipAlgorithm() {
             });
 
             // Pause the loop
-            continueLoop = false;
-        });
+            continueLoop = false; 
+        }); 
 	}
 
 	console.log("Done!");
@@ -114,6 +112,7 @@ function isDelaunay(edge) {
 
     // If any circumcenter is null, the points are collinear and not Delaunay
     if (!xc1 || !yc1 || !rc1 || !xc2 || !yc2 || !rc2) {
+		console.log("Collinear points.");
         return false;
     }
 

@@ -6,14 +6,115 @@ Gabriela Ishikawa */
 // =============== FLIP EDGE ================
 // ===========================================
 
+async function flipAlgorithm() {
+
+	// Insert all the internal edges of the triangulation in a stack
+	let stack = [];
+	for (edge of mesh.edges) {
+		if (edge.oppo != null) {
+			stack.push(edge);
+		}
+	}
+
+	// Do while the stack is not empty
+	while (stack.length > 0) {
+
+		console.log("There are", stack.length, "edges in the stack.")
+
+		// Pop the top edge from the stack
+		let edge = stack.pop();
+		
+
+		draw_mesh(mesh, canvas1);
+		// print edge in red
+		draw_edge(edge.orig.pos, edge.dest.pos, canvas1, color="red");
+
+		await waitOneSecond();
+
+		// If the edge is not Delaunay, flip it and add the new edges to the stack
+		if (!isDelaunay(edge)) {
+			console.log("This edge is not Delaunay.")
+			clear_canvas(canvas1);
+			flipEdge(edge);
+			draw_mesh(mesh, canvas1);
+			stack.push(edge.next);
+			stack.push(edge.next.next);
+			stack.push(edge.oppo.next);
+			stack.push(edge.oppo.next.next);
+		}
+
+		// iF the edge is Delaunay, remove it from the stack
+		else {
+			console.log("This edge is Delaunay.");
+			//stack.splice(stack.indexOf(edge), 1);
+		} 
+
+		await waitOneSecond();
+	}
+
+	console.log("Done!");
+}
+
+function waitOneSecond() {
+    return new Promise(resolve => setTimeout(resolve, 500));
+}
+
+
+// Function to check if an edge is Delaunay
+async function isDelaunay(edge) {
+    const A = edge.orig.pos; // Coordinates of the origin node of the edge
+    const B = edge.dest.pos; // Coordinates of the destination node of the edge
+    const face1 = edge.incidentFace;
+    const face2 = edge.oppo.incidentFace;
+
+    // Check if both faces exist (i.e., edge is on the convex hull)
+    if (!face1 || !face2) {
+        return true;
+    }
+
+    // Get the third vertex of each face (not on the edge)
+    const C1 = edge.next.dest.pos;
+    const C2 = edge.oppo.next.dest.pos;
+
+    // Calculate circumcenters and circumradii for both triangles
+    const [xc1, yc1, rc1] = circumcenter(A, B, C1);
+    const [xc2, yc2, rc2] = circumcenter(A, B, C2);
+
+	// plot A, B, C1, C2
+	draw_point(A[0], A[1], canvas1, color="red", label="A");
+	draw_point(B[0], B[1], canvas1, color="red", label="B");
+	draw_point(C1[0], C1[1], canvas1, color="red", label="C1");
+	draw_point(C2[0], C2[1], canvas1, color="red", label="C2");
+	// plot circumcenters and circles
+	draw_point(xc1, yc1, canvas1, color="red");
+	draw_point(xc2, yc2, canvas1, color="red");
+	draw_circle(xc1, yc1, rc1, canvas1);
+	draw_circle(xc2, yc2, rc2, canvas1);
+
+	await waitOneSecond();
+
+    // If any circumcenter is null, the points are collinear and not Delaunay
+    if (!xc1 || !yc1 || !rc1 || !xc2 || !yc2 || !rc2) {
+        return false;
+    }
+
+    // Check if C1 is inside the circumcircle of triangle A, B, C2
+	if (distance([xc2, yc2], C1) <= rc2) {
+		return false;
+	}
+
+	// Check if C2 is inside the circumcircle of triangle A, B, C1
+	if (distance([xc1, yc1], C2) <= rc1) {
+		return false;
+	}
+
+	return true;
+}
 
 function flipEdge(edgeToFlip) {
 
-	clear_canvas(canvas1);
-
     if (!edgeToFlip || !edgeToFlip.oppo) {
         console.log("Edge cannot be flipped.");
-		draw_mesh(mesh, canvas1);
         return;
     }
 
@@ -35,12 +136,8 @@ function flipEdge(edgeToFlip) {
 	let topVertex = originalEdge.dest;
     let bottomVertex = oppositeEdge.dest;
 
-	console.log(leftVertex.pos, rightVertex.pos, topVertex.pos, bottomVertex.pos);
-
-
 	if (check_intersection(leftVertex.pos, rightVertex.pos, topVertex.pos, bottomVertex.pos) != 1) {
-        console.warn("Warning: The two pairs of triangles do not form a convex quadrilateral.");
-		draw_mesh(mesh, canvas1);
+        console.log("Edge on concave polygon.");
         return;
     }
 	
@@ -67,11 +164,7 @@ function flipEdge(edgeToFlip) {
 
 	originalEdge.next.incidentFace = FaceA;
 	oppositeEdge.next.incidentFace = FaceB;
-
-	draw_mesh(mesh, canvas1);
 }
-
-
 
 // ===========================================
 // =========== SWEEP LINE ====================
@@ -175,23 +268,6 @@ function midpoint(mesh) {
 	const y = (yMin + yMax)/2;
 
 	return [x, y];
-}
-
-// Function that, given a circle and a point, returns the tangent line
-function tangent_line(x, y, r, point) {
-	// check if the point is on the circumference
-	if ((point[0] - x)**2 + (point[1] - y)**2 != r**2) return null;
-
-	// get the coordinates of the point
-	const [xPoint, yPoint] = point;
-
-	// get the slope of the tangent line
-	const m = (yPoint - y)/(xPoint - x);
-
-	// get the intercept of the tangent line
-	const b = yPoint - m*xPoint;
-
-	return [m, b];
 }
 
 function super_triangle(mesh, canvas) {
@@ -377,161 +453,6 @@ function create_random_triangles(mesh, convexVertex) {
 	mesh.edges.push(edge_oppo);
 
 }
-
-// for finding the convex hull
-function orientation(p, q, r) {
-    var r = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1]);
-    if (r == 0) return 0;
-    return (r > 0) ? 1 : -1;
-}
-
-function distance(a, b) {
-    var res = ((b[0] - a[0]) ** 2) + ((b[1] - a[1]) ** 2);
-    res = Math.sqrt(res);
-    return res; 
-}
-
-function compare(a, b) { 
-    var p = bottomMost;
-    var o = orientation(p, a, b); 
-    if (o == 0) 
-        return (distance(p, b) >= distance(p, a))? -1 : 1; 
-   return (o == -1)? -1: 1; 
-}
-
-function findConvex(mesh) {
-	
-	points = mesh.nodes.map(node => node.pos);
-
-	// sort by y-axis values
-	points.sort(function(a, b) {return a[1] - b[1]});
-    bottomMost = points[0];
-    points.splice(0, 1);
-
-	// separates from bottom and top half
-	points.sort(compare);
-    points.unshift(bottomMost);
-
-    // get 2 points to start comparing
-    var stack = [points[0], points[1]];
-    var tracker = 2;
-    var count = 2;
-    while(true) {
-        var check = false;
-        if (tracker == (points.length)) {
-            break;
-        }
-        if (orientation(stack[count - 2], stack[count - 1], points[tracker]) == -1) {
-            stack.push(points[tracker]);
-            count++;
-        } else {
-            count--;
-            stack.pop();
-            check = true;
-        }
-        var s = stack.slice();
-        
-        if (!check) {
-            tracker++;
-        }
-    }
-
-	var convexVertex = [];
-	for (let i = 0; i < stack.length; i++) {
-		id = mesh.nodes.map(node => node.pos).findIndex(element => element === stack[i]);
-		convexVertex.push(mesh.nodes[id]);
-	}
-
-	// make it counterclockwise
-	convexVertex.reverse();
-    return convexVertex;
-}
-
-function drawConvex(convexVertex, canvas) {
-	for (let i = 0; i < convexVertex.length - 1; i++) {
-		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas);
-	}
-	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas);
-}
-
-function create_random_triangles(mesh, convexVertex) {
-	// get first node to triangulate
-	missingNodes = mesh.nodes.filter(element => !convexVertex.includes(element));
-	node = missingNodes[0];
-
-	for (let i = 0; i < convexVertex.length; i++) {
-		// create edges of convex hull
-		face = {
-			id: i,
-			incidentEdge: null
-		};
-
-		edge = {
-			orig: convexVertex[i],
-			dest: convexVertex[(i+1)%convexVertex.length],
-			incidentFace: face,
-			next: null,
-			oppo: null
-		};
-
-		face.incidentEdge = edge;
-
-		mesh.edges.push(edge);
-		mesh.faces.push(face);
-	}
-
-	edge = {
-		orig: node,
-		dest: mesh.edges[0].orig,
-		incidentFace: mesh.faces[0],
-		next: mesh.edges[0],
-		oppo: null
-	};
-
-	edge_oppo = {
-		orig: mesh.edges[0].orig,
-		dest: node,
-		incidentFace: mesh.faces[mesh.faces.length-1],
-		next: null,
-		oppo: edge
-	};
-
-	edge.oppo = edge_oppo;
-	mesh.faces[mesh.faces.length-1].incidentEdge.next = edge_oppo;
-	mesh.edges.push(edge);
-
-
-	for (let i = convexVertex.length - 1; i > 0; i--) {
-
-		last_oppo = edge.oppo
-
-		edge = {
-			orig: node,
-			dest: convexVertex[i],
-			incidentFace: mesh.faces[i],
-			next: mesh.edges[i],
-			oppo: null
-		};
-		last_oppo.next = edge;
-
-		edge_oppo = {
-			orig: convexVertex[i],
-			dest: node,
-			incidentFace: mesh.faces[i-1],
-			next: null,
-			oppo: edge
-		};
-		edge.oppo = edge_oppo;
-		mesh.faces[i-1].incidentEdge.next = edge_oppo;
-		mesh.edges.push(edge);
-		mesh.edges.push(last_oppo);
-	}
-
-	edge_oppo.next = mesh.edges[convexVertex.length];
-	mesh.edges.push(edge_oppo);
-
-}
-
 
 
 // ===========================================

@@ -1,0 +1,39 @@
+function flipAlgorithm() {
+
+	// Insert all the internal edges of the triangulation in a stack
+	let stack = [];
+	for (edge of mesh.edges) {
+		if (edge.oppo != null) {
+			stack.push(edge);
+		}
+	}
+
+	// Do while the stack is not empty
+	while (stack.length > 0) {
+
+	
+		// Pop the top edge from the stack
+		let edge = stack.pop();
+		
+		// If the edge is not Delaunay, flip it and add the new edges to the stack
+		if (!isDelaunay(edge)) {
+			const wasflipped = flipEdge(edge);
+
+			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
+			if (wasflipped) {
+				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Aqui1")};
+				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Aqui4")}
+				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Aqui3")};
+				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};				
+			}
+		}
+
+		// iF the edge is Delaunay, remove it from the stack
+		else {
+			console.log("This edge is Delaunay.");
+		} 
+		
+	}
+
+	console.log("Done!");
+}

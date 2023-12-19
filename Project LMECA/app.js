@@ -16,11 +16,15 @@ async function flipAlgorithm() {
 		}
 	}
 
+	// Pop the firsts 59 edge from the stack and forget them 
+	//for (let i = 0; i < 59; i++) {stack.pop();} 
+
 	// Do while the stack is not empty
 	while (stack.length > 0) {
 
 		console.log("There are", stack.length, "edges in the stack.")
-
+		console.log(stack);
+	
 		// Pop the top edge from the stack
 		let edge = stack.pop();
 		console.log("I'm checking the edge between", edge.orig.id, "and", edge.dest.id, ".")
@@ -42,34 +46,20 @@ async function flipAlgorithm() {
 			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
 			if (wasflipped) {
 				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Aqui1")};
-				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};
-				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Aqui3")};
 				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Aqui4")}
+				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Aqui3")};	
+				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};
+				
+										
 			}
 		}
-
 
 		// iF the edge is Delaunay, remove it from the stack
 		else {
 			await waitOneSecond();
 			console.log("This edge is Delaunay.");
-			//stack.splice(stack.indexOf(edge), 1);
 		} 
-
-		// Pause the code while the user doesnt click on the canvas
-        await new Promise(resolve => {
-            canvas1.addEventListener('click', function clickHandler() {
-                // Remove the event listener to avoid multiple clicks
-                canvas1.removeEventListener('click', clickHandler);
-                
-                // Resume the loop
-                continueLoop = true;
-                resolve();
-            });
-
-            // Pause the loop
-            continueLoop = false; 
-        }); 
+		
 	}
 
 	console.log("Done!");
@@ -85,6 +75,7 @@ function isDelaunay(edge) {
 
 	// Check if both faces exist (i.e., edge is on the convex hull)
     if (!edge || !(edge.oppo)) {
+		console.log("Edge is on the convex hull.");
         return true;
     }
 
@@ -116,20 +107,49 @@ function isDelaunay(edge) {
         return false;
     }
 
-    // Check if any point of the mesh is inside the circumcircle of A, B and C1
+
+	/*
 	for (node of mesh.nodes) {
+
+			// Exclude A, B and C1 of the check
+			if (node.id == edge.orig.id || node.id == edge.dest.id || node.id == edge.next.dest.id) continue;
+
 			if (distance([xc1, yc1], node.pos) < rc1) {
+				console.log("Point", node.id, "is inside the circumcircle of A, B and C1.");
+				console.log(distance([xc1, yc1], node.pos), rc1);
 				return false;
 			}	
 	}
 
 	// Check if any point of the mesh is inside the circumcircle of A, B and C2
 	for (node of mesh.nodes) {
+
+			// Exclude A, B and C2 of the check
+			if (node.id == edge.orig.id || node.id == edge.dest.id || node.id == edge.oppo.next.dest.id) continue;
+
 			if (distance([xc2, yc2], node.pos) < rc2) {
+				console.log("Point", node.id, "is inside the circumcircle of A, B and C2.");
+				console.log(distance([xc2, yc2], node.pos), rc2);
 				return false;
 			}
+	}*/
+
+	// check if point C1 is inside the circumcircle of A, B and C2
+	if (distance([xc2, yc2], C1) < rc2) {
+		console.log("Point C1 is inside the circumcircle of A, B and C2.");
+		console.log(distance([xc2, yc2], C1), rc2);
+		return false;
 	}
+
+	// check if point C2 is inside the circumcircle of A, B and C1
+	if (distance([xc1, yc1], C2) < rc1) {
+		console.log("Point C2 is inside the circumcircle of A, B and C1.");
+		console.log(distance([xc1, yc1], C2), rc1);
+		return false;
+	} 
+
 	return true;
+
 }
 
 function flipEdge(edgeToFlip) {
@@ -682,7 +702,7 @@ function create_mesh(mesh_data) {
 
 
 function draw_mesh(mesh, canvas) {
-	//size_adapt(canvas, mesh.nodes, offset=0);
+	size_adapt(canvas, mesh.nodes, offset=0);
 
 	// Draw triangles
 	context = canvas.getContext('2d');

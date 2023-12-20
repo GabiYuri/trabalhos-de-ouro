@@ -5,10 +5,17 @@
 		<title>Project</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="./style.css" type="text/css">
-        <script type="text/javascript" src="mesh_small.json"></script>
-		<script type="text/javascript" src="nodes_coarse.json"></script>
-		<script type="text/javascript" src="teste.json"></script>
-		<script type="text/javascript" src="app.js"></script>
+        <script type="text/javascript" src="data/mesh_small.json"></script>
+		<script type="text/javascript" src="data/nodes_coarse.json"></script>
+		<script type="text/javascript" src="data/teste.json"></script>
+
+		<script type="text/javascript" src="scripts/drawElement.js"></script>
+		<script type="text/javascript" src="scripts/pointLocation.js"></script>
+		<script type="text/javascript" src="scripts/flipAlgorithm.js"></script>
+		<script type="text/javascript" src="scripts/randomTrangulation.js"></script>
+		<script type="text/javascript" src="scripts/convexHull.js"></script>
+		<script type="text/javascript" src="scripts/bowyerTriangulation.js"></script>
+
         <script src="https://unpkg.com/robust-predicates@3.0.1/umd/predicates.min.js"></script>
 	</head>
 
@@ -62,10 +69,10 @@
 			
 
 			// find the convexHull given an array of points
-			mesh = triangulate(nodeData, canvas1);
-			size_adapt(canvas1, mesh.nodes, offset=0, margin=0.1);
-			draw_mesh(mesh, canvas1);
-			flipAlgorithm();
+        	mesh = random_triangulation(nodeData, canvas1);
+        	flip_algorithm(mesh, canvas1);
+
+			mesh2 = bowyer_triangulation(nodeData, canvas2);
 
 			
             const clear1Button = document.getElementById("clear1Button");

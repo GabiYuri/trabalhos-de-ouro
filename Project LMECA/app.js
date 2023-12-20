@@ -6,7 +6,7 @@ Gabriela Ishikawa */
 // =============== FLIP EDGE =================
 // ===========================================
 
-async function flipAlgorithm() {
+async function flipAlgorithm(mesh, canvas) {
 
 	// Insert all the internal edges of the triangulation in a stack
 	let stack = [];
@@ -30,27 +30,25 @@ async function flipAlgorithm() {
 		console.log("I'm checking the edge between", edge.orig.id, "and", edge.dest.id, ".")
 		
 		// For visualiation purposes
-		clear_canvas(canvas1);
-		draw_mesh(mesh, canvas1);
-		draw_edge(edge.orig.pos, edge.dest.pos, canvas1, color="red");
+		clear_canvas(canvas);
+		draw_mesh(mesh, canvas);
+		draw_edge(edge.orig.pos, edge.dest.pos, canvas, color="red");
 		await waitOneSecond();
 
 		
 		// If the edge is not Delaunay, flip it and add the new edges to the stack
-		if (!isDelaunay(edge)) {
+		if (!isDelaunay(edge, canvas)) {
 			await waitOneSecond();
 			console.log("This edge is not Delaunay.")
 			const wasflipped = flipEdge(edge);
-			draw_mesh(mesh, canvas1);
+			draw_mesh(mesh, canvas);
 
 			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
 			if (wasflipped) {
 				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Aqui1")};
 				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Aqui4")}
 				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Aqui3")};	
-				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};
-				
-										
+				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};			
 			}
 		}
 
@@ -66,12 +64,12 @@ async function flipAlgorithm() {
 }
 
 function waitOneSecond() {
-    return new Promise(resolve => setTimeout(resolve, 100));
+    return new Promise(resolve => setTimeout(resolve, 50));
 }
 
 
 // Function to check if an edge is Delaunay
-function isDelaunay(edge) {
+function isDelaunay(edge, canvas) {
 
 	// Check if both faces exist (i.e., edge is on the convex hull)
     if (!edge || !(edge.oppo)) {
@@ -91,15 +89,15 @@ function isDelaunay(edge) {
     const [xc2, yc2, rc2] = circumcenter(A, B, C2);
 
 	// plot A, B, C1, C2
-	draw_point(A[0], A[1], canvas1, color="red", label="A");
-	draw_point(B[0], B[1], canvas1, color="red", label="B");
-	draw_point(C1[0], C1[1], canvas1, color="red", label="C1");
-	draw_point(C2[0], C2[1], canvas1, color="red", label="C2");
+	draw_point(A[0], A[1], canvas, color="red", label="A");
+	draw_point(B[0], B[1], canvas, color="red", label="B");
+	draw_point(C1[0], C1[1], canvas, color="red", label="C1");
+	draw_point(C2[0], C2[1], canvas, color="red", label="C2");
 	// plot circumcenters and circles
-	draw_point(xc1, yc1, canvas1, color="red");
-	draw_point(xc2, yc2, canvas1, color="red");
-	draw_circle(xc1, yc1, rc1, canvas1);
-	draw_circle(xc2, yc2, rc2, canvas1);
+	draw_point(xc1, yc1, canvas, color="red");
+	draw_point(xc2, yc2, canvas, color="red");
+	draw_circle(xc1, yc1, rc1, canvas);
+	draw_circle(xc2, yc2, rc2, canvas);
 
     // If any circumcenter is null, the points are collinear and not Delaunay
     if (!xc1 || !yc1 || !rc1 || !xc2 || !yc2 || !rc2) {

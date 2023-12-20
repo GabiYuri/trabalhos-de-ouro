@@ -2,7 +2,9 @@
 // =============== FLIP ALGORITHM =================
 // ================================================
 
-async function flip_algorithm(mesh, canvas) {
+
+
+function flip_algorithm(mesh, canvas) {
 
 	// Insert all the internal edges of the triangulation in a stack
 	let stack = [];
@@ -12,8 +14,36 @@ async function flip_algorithm(mesh, canvas) {
 		}
 	}
 
-	// Pop the firsts 59 edge from the stack and forget them 
-	//for (let i = 0; i < 59; i++) {stack.pop();} 
+	// Do while the stack is not empty
+	while (stack.length > 0) {
+
+		// Pop the top edge from the stack
+		let edge = stack.pop();
+				
+		// If the edge is not Delaunay, flip it and add the new edges to the stack
+		if (!isDelaunay(edge, canvas)) {
+			const wasflipped = flipEdge(edge);
+
+			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
+			if (wasflipped) {
+				if (!stack.includes(edge.next)) {stack.push(edge.next)};
+				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next)}
+				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next)};	
+				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next)};			
+			}
+		}	
+	}
+}
+
+async function flip_algorithm_animated(mesh, canvas) {
+
+	// Insert all the internal edges of the triangulation in a stack
+	let stack = [];
+	for (edge of mesh.edges) {
+		if (edge.oppo != null) {
+			stack.push(edge);
+		}
+	}
 
 	// Do while the stack is not empty
 	while (stack.length > 0) {
@@ -33,7 +63,7 @@ async function flip_algorithm(mesh, canvas) {
 
 		
 		// If the edge is not Delaunay, flip it and add the new edges to the stack
-		if (!isDelaunay(edge, canvas)) {
+		if (!isDelaunay(edge, canvas, animated=true)) {
 			await waitOneSecond();
 			console.log("This edge is not Delaunay.")
 			const wasflipped = flipEdge(edge);
@@ -41,10 +71,10 @@ async function flip_algorithm(mesh, canvas) {
 
 			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
 			if (wasflipped) {
-				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Aqui1")};
-				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Aqui4")}
-				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Aqui3")};	
-				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Aqui2")};			
+				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Add1")};
+				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Add2")}
+				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Add3")};	
+				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Add4")};			
 			}
 		}
 
@@ -63,9 +93,8 @@ function waitOneSecond() {
     return new Promise(resolve => setTimeout(resolve, 50));
 }
 
-
 // Function to check if an edge is Delaunay
-function isDelaunay(edge, canvas) {
+function isDelaunay(edge, canvas, animated=false) {
 
 	// Check if both faces exist (i.e., edge is on the convex hull)
     if (!edge || !(edge.oppo)) {
@@ -84,6 +113,7 @@ function isDelaunay(edge, canvas) {
     const [xc1, yc1, rc1] = circumcenter(A, B, C1);
     const [xc2, yc2, rc2] = circumcenter(A, B, C2);
 
+	if (animated) {
 	// plot A, B, C1, C2
 	draw_point(A[0], A[1], canvas, color="red", label="A");
 	draw_point(B[0], B[1], canvas, color="red", label="B");
@@ -94,39 +124,13 @@ function isDelaunay(edge, canvas) {
 	draw_point(xc2, yc2, canvas, color="red");
 	draw_circle(xc1, yc1, rc1, canvas);
 	draw_circle(xc2, yc2, rc2, canvas);
+	}
 
     // If any circumcenter is null, the points are collinear and not Delaunay
     if (!xc1 || !yc1 || !rc1 || !xc2 || !yc2 || !rc2) {
 		console.log("Collinear points.");
         return false;
     }
-
-
-	/*
-	for (node of mesh.nodes) {
-
-			// Exclude A, B and C1 of the check
-			if (node.id == edge.orig.id || node.id == edge.dest.id || node.id == edge.next.dest.id) continue;
-
-			if (distance([xc1, yc1], node.pos) < rc1) {
-				console.log("Point", node.id, "is inside the circumcircle of A, B and C1.");
-				console.log(distance([xc1, yc1], node.pos), rc1);
-				return false;
-			}	
-	}
-
-	// Check if any point of the mesh is inside the circumcircle of A, B and C2
-	for (node of mesh.nodes) {
-
-			// Exclude A, B and C2 of the check
-			if (node.id == edge.orig.id || node.id == edge.dest.id || node.id == edge.oppo.next.dest.id) continue;
-
-			if (distance([xc2, yc2], node.pos) < rc2) {
-				console.log("Point", node.id, "is inside the circumcircle of A, B and C2.");
-				console.log(distance([xc2, yc2], node.pos), rc2);
-				return false;
-			}
-	}*/
 
 	// check if point C1 is inside the circumcircle of A, B and C2
 	if (distance([xc2, yc2], C1) < rc2) {
@@ -201,4 +205,24 @@ function flipEdge(edgeToFlip) {
 	oppositeEdge.next.incidentFace = FaceB;
 
 	return 1;
+}
+
+// Function that, given an edge, returns the perpendicular line segment bisector
+function perpendicular_bisector(edge) {
+
+	// Get the coordinates of the two vertices of the edge
+	const A = edge.orig.pos;
+	const B = edge.dest.pos;
+
+	// Calculate the midpoint of the edge
+	const mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+
+	// Calculate the slope of the perpendicular line
+	const m = (A[0] - B[0]) / (B[1] - A[1]);
+
+	// Calculate the y-intercept of the perpendicular line
+	const b = mid[1] - m * mid[0];
+
+	// Return the slope and y-intercept of the perpendicular line
+	return [m, b];
 }

@@ -141,7 +141,6 @@ function draw_edge(A, B, canvas, color="black"){
 }
 
 
-// Create a function that, for the circumcenter and the circumradius, plot the circumcircle
 /**
  * @brief           Draw a circle given its center and radius
  * @param x         x-coordinate of the center
@@ -156,4 +155,23 @@ function draw_circle(x, y, r, canvas) {
 	context.beginPath();
 	context.arc(x, y, r, 0, 2 * Math.PI);
 	context.stroke();
+}
+
+/**
+ * @brief           Draw an line given the slope and the y-intercept
+ * @param m         slope of the line
+ * @param b         y-intercept of the line
+ * @param canvas    selected canvas
+ * @param color     edge color
+ */
+function draw_line(m, b, canvas, color = "black") {
+    // draw a line given the slope and the y-intercept
+    var context = canvas.getContext('2d');
+    context.strokeStyle = color;
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(0, b);
+    context.lineTo(canvas.width, m*canvas.width + b);
+    context.stroke();
+
 }

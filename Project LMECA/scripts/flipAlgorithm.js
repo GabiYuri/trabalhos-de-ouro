@@ -210,19 +210,66 @@ function flipEdge(edgeToFlip) {
 // Function that, given an edge, returns the perpendicular line segment bisector
 function perpendicular_bisector(edge) {
 
-	// Get the coordinates of the two vertices of the edge
-	const A = edge.orig.pos;
-	const B = edge.dest.pos;
+    // Get the coordinates of the two vertices of the edge
+    const A = edge.orig.pos;
+    const B = edge.dest.pos;
 
-	// Calculate the midpoint of the edge
-	const mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+    // Calculate the midpoint of the edge
+    const mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
 
-	// Calculate the slope of the perpendicular line
-	const m = (A[0] - B[0]) / (B[1] - A[1]);
+    // Calculate the slope of the original line
+    const originalSlope = (B[1] - A[1]) / (B[0] - A[0]);
 
-	// Calculate the y-intercept of the perpendicular line
-	const b = mid[1] - m * mid[0];
+    // Calculate the slope of the perpendicular line (negative reciprocal)
+    const perpendicularSlope = -1 / originalSlope;
+
+    // Calculate the y-intercept of the perpendicular line
+    const b = mid[1] - perpendicularSlope * mid[0];
+
+	//draw_point(mid[0], mid[1], canvas1, color="red");
+	//draw_line(perpendicularSlope, b, canvas1, color="red");
 
 	// Return the slope and y-intercept of the perpendicular line
-	return [m, b];
+    return [perpendicularSlope, b];
+}
+
+// Function that, given two lines, returns the intersection point
+function intersection_point(m1, b1, m2, b2) {
+
+	// Calculate the x-coordinate of the intersection point
+	const x = (b2 - b1) / (m1 - m2);
+
+	// Calculate the y-coordinate of the intersection point
+	const y = m1 * x + b1;
+
+	draw_point(x, y, canvas1, color="red");
+
+	// Return the coordinates of the intersection point
+	return [x, y];
+}
+
+function voronoi() {
+
+	let vertex = [];
+
+	// For every triangle, draw the perpendicular bisector of each edge
+	for (face of mesh.faces) {
+		const [m1, b1] = perpendicular_bisector(face.incidentEdge);
+		const [m2, b2] = perpendicular_bisector(face.incidentEdge.next);
+		
+		[x, y] = intersection_point(m1, b1, m2, b2, canvas1);
+		vertex.push([x, y]);
+	}
+
+	console.log(vertex);
+
+	for (face of mesh.faces) {
+
+		face_id = face.id;
+
+		// define n1_face_id if face.incidentEdge.oppo is not null
+		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas1, color="red");}
+		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas1, color="red");}
+		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas1, color="red");}
+	}
 }

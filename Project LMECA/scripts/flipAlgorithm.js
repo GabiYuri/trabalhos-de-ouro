@@ -176,7 +176,7 @@ function perpendicular_bisector(edge) {
 }
 
 // Function that, given two lines, returns the intersection point
-function intersection_point(m1, b1, m2, b2) {
+function intersection_point(m1, b1, m2, b2, canvas) {
 
 	// Calculate the x-coordinate of the intersection point
 	const x = (b2 - b1) / (m1 - m2);
@@ -184,13 +184,13 @@ function intersection_point(m1, b1, m2, b2) {
 	// Calculate the y-coordinate of the intersection point
 	const y = m1 * x + b1;
 
-	draw_point(x, y, canvas1, color="red");
+	draw_point(x, y, canvas, color="red");
 
 	// Return the coordinates of the intersection point
 	return [x, y];
 }
 
-function voronoi() {
+function voronoi(mesh, canvas) {
 
 	let vertex = [];
 
@@ -199,19 +199,19 @@ function voronoi() {
 		const [m1, b1] = perpendicular_bisector(face.incidentEdge);
 		const [m2, b2] = perpendicular_bisector(face.incidentEdge.next);
 		
-		[x, y] = intersection_point(m1, b1, m2, b2, canvas1);
+		[x, y] = intersection_point(m1, b1, m2, b2, canvas);
 		vertex.push([x, y]);
 	}
 
-	console.log(vertex);
+	//console.log(vertex);
 
 	for (face of mesh.faces) {
 
 		face_id = face.id;
 
 		// define n1_face_id if face.incidentEdge.oppo is not null
-		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas1, color="red");}
-		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas1, color="red");}
-		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas1, color="red");}
+		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, color="red");}
+		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, color="red");}
+		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, color="red");}
 	}
 }

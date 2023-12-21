@@ -109,7 +109,7 @@ function findConvex(mesh) {
  */
 function drawConvex(convexVertex, canvas) {
 	for (let i = 0; i < convexVertex.length - 1; i++) {
-		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas);
+		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas, color="steelblue");
 	}
-	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas);
+	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas, color="steelblue");
 }

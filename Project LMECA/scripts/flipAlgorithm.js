@@ -35,70 +35,12 @@ function flip_algorithm(mesh, canvas) {
 	}
 }
 
-async function flip_algorithm_animated(mesh, canvas) {
-
-	// Insert all the internal edges of the triangulation in a stack
-	let stack = [];
-	for (edge of mesh.edges) {
-		if (edge.oppo != null) {
-			stack.push(edge);
-		}
-	}
-
-	// Do while the stack is not empty
-	while (stack.length > 0) {
-
-		console.log("There are", stack.length, "edges in the stack.")
-		console.log(stack);
-	
-		// Pop the top edge from the stack
-		let edge = stack.pop();
-		console.log("I'm checking the edge between", edge.orig.id, "and", edge.dest.id, ".")
-		
-		// For visualiation purposes
-		clear_canvas(canvas);
-		draw_mesh(mesh, canvas);
-		draw_edge(edge.orig.pos, edge.dest.pos, canvas, color="red");
-		await waitOneSecond();
-
-		
-		// If the edge is not Delaunay, flip it and add the new edges to the stack
-		if (!isDelaunay(edge, canvas, animated=true)) {
-			await waitOneSecond();
-			console.log("This edge is not Delaunay.")
-			const wasflipped = flipEdge(edge);
-			draw_mesh(mesh, canvas);
-
-			// if was flipped, add the new edges to the end of the stack, but check if they are not already there
-			if (wasflipped) {
-				if (!stack.includes(edge.next)) {stack.push(edge.next); console.log("Add1")};
-				if (!stack.includes(edge.oppo.next.next)) {stack.push(edge.oppo.next.next); console.log("Add2")}
-				if (!stack.includes(edge.oppo.next)) {stack.push(edge.oppo.next); console.log("Add3")};	
-				if (!stack.includes(edge.next.next)) {stack.push(edge.next.next); console.log("Add4")};			
-			}
-		}
-
-		// iF the edge is Delaunay, remove it from the stack
-		else {
-			await waitOneSecond();
-			console.log("This edge is Delaunay.");
-		} 
-		
-	}
-
-	console.log("Done!");
-}
-
-function waitOneSecond() {
-    return new Promise(resolve => setTimeout(resolve, 50));
-}
-
 // Function to check if an edge is Delaunay
 function isDelaunay(edge, canvas, animated=false) {
 
 	// Check if both faces exist (i.e., edge is on the convex hull)
     if (!edge || !(edge.oppo)) {
-		console.log("Edge is on the convex hull.");
+		if (animated) console.log("Edge is on the convex hull.");
         return true;
     }
 
@@ -115,10 +57,10 @@ function isDelaunay(edge, canvas, animated=false) {
 
 	if (animated) {
 	// plot A, B, C1, C2
-	draw_point(A[0], A[1], canvas, color="red", label="A");
-	draw_point(B[0], B[1], canvas, color="red", label="B");
-	draw_point(C1[0], C1[1], canvas, color="red", label="C1");
-	draw_point(C2[0], C2[1], canvas, color="red", label="C2");
+	draw_point(A[0], A[1], canvas, color="red");
+	draw_point(B[0], B[1], canvas, color="red");
+	draw_point(C1[0], C1[1], canvas, color="red");
+	draw_point(C2[0], C2[1], canvas, color="red");
 	// plot circumcenters and circles
 	draw_point(xc1, yc1, canvas, color="red");
 	draw_point(xc2, yc2, canvas, color="red");
@@ -128,21 +70,21 @@ function isDelaunay(edge, canvas, animated=false) {
 
     // If any circumcenter is null, the points are collinear and not Delaunay
     if (!xc1 || !yc1 || !rc1 || !xc2 || !yc2 || !rc2) {
-		console.log("Collinear points.");
+		if (animated) console.log("Collinear points.");
         return false;
     }
 
 	// check if point C1 is inside the circumcircle of A, B and C2
 	if (distance([xc2, yc2], C1) < rc2) {
-		console.log("Point C1 is inside the circumcircle of A, B and C2.");
-		console.log(distance([xc2, yc2], C1), rc2);
+		if (animated) console.log("Point C1 is inside the circumcircle of A, B and C2.");
+		//console.log(distance([xc2, yc2], C1), rc2);
 		return false;
 	}
 
 	// check if point C2 is inside the circumcircle of A, B and C1
 	if (distance([xc1, yc1], C2) < rc1) {
-		console.log("Point C2 is inside the circumcircle of A, B and C1.");
-		console.log(distance([xc1, yc1], C2), rc1);
+		if (animated) console.log("Point C2 is inside the circumcircle of A, B and C1.");
+		//console.log(distance([xc1, yc1], C2), rc1);
 		return false;
 	} 
 

@@ -8,50 +8,20 @@
  * @param canvas            Selected canvas
  * @returns                 Mesh structure as doubly-connected edge list
  */
-function random_triangulation(nodes, canvas) {
+function random_triangulation(nodes) {
 	var mesh = create_mesh_nodes(nodes);
 	var convexVertex = findConvex(mesh);
 	var points2Triagulate = create_big_triangles(mesh, convexVertex);
 
 	for (point of points2Triagulate) {
-		mesh = create_new_triangle(point, mesh);
+		create_new_triangle(point, mesh);
 	}
 
     //size_adapt(canvas, mesh.nodes, offset=0, margin=0.1);
-    draw_mesh(mesh, canvas);
+    //draw_mesh(mesh, canvas);
 
 	return mesh;
 }
-
-
-function random_triangulation_animated(nodes, canvas) {
-	var mesh = create_mesh_nodes(nodes);
-	var convexVertex = findConvex(mesh);
-	var points2Triagulate = create_big_triangles(mesh, convexVertex);
-
-	function drawMeshWithDelay(mesh, delay) {
-		setTimeout(function() {
-			draw_mesh(mesh, canvas);
-		}, delay);
-	}
-
-	function createTriangleWithDelay(point, mesh, delay) {
-		setTimeout(function() {
-			mesh = create_new_triangle(point, mesh);
-			drawMeshWithDelay(mesh, delay);
-		}, delay);
-	}
-
-	for (var i = 0; i < points2Triagulate.length; i++) {
-		var point = points2Triagulate[i];
-		var delay = (i + 1) * 100; // Delay in milliseconds, adjust as needed
-		createTriangleWithDelay(point, mesh, delay);
-	}
-
-	return mesh;
-}
-
-
 
 
 /**
@@ -167,7 +137,7 @@ function create_big_triangles(mesh, convexVertex) {
  * @param mesh          Mesh structure as doubly-connected edge list
  * @param canvas        Selected canvas
  */
-function create_new_triangle(point, mesh) {
+function create_new_triangle(point, mesh, canvas) {
 	
 	var inTriangle = point_location(point, mesh);
 

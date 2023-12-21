@@ -133,7 +133,7 @@ function draw_edge(A, B, canvas, color="black"){
     // draw a segment AB
     var context = canvas.getContext('2d');
     context.strokeStyle = color;
-	context.lineWidth = 2;
+	context.lineWidth = 1;
     context.beginPath();
     context.moveTo(A[0], A[1]);
     context.lineTo(B[0], B[1]);
@@ -174,4 +174,28 @@ function draw_line(m, b, canvas, color = "black") {
     context.lineTo(canvas.width, m*canvas.width + b);
     context.stroke();
 
+}
+
+
+/**
+ * @brief           Fill in the triangle with the desired colour
+ * @param triangle 	triangle to fill
+ * @param canvas    selected canvas
+ * @param color     fill color
+ */
+function fill_triangle(triangle, canvas, color="lightblue") {
+    // fill the background of the triangle ABC
+	A = triangle.incidentEdge.orig.pos
+	B = triangle.incidentEdge.dest.pos
+	C = triangle.incidentEdge.next.dest.pos
+    context = canvas.getContext('2d');
+    context.fillStyle = color;
+    context.globalAlpha = 0.5;
+    context.beginPath();
+    context.moveTo(A[0], A[1]);
+    context.lineTo(B[0], B[1]);
+    context.lineTo(C[0], C[1]);
+    context.closePath();
+    context.fill();
+    context.globalAlpha = 1;
 }

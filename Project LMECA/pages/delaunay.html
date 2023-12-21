@@ -33,31 +33,68 @@
         <div id="container">
 
             <div id="container_canvas">
-                <canvas id="delaunay" width="750" height="750"></canvas>
-                <canvas id="console_delaunay" width="750" height="30"></canvas>
+                <canvas id="flip_edge" width="750" height="750"></canvas>
+                <canvas id="console_flip_edge" width="750" height="30"></canvas>
     
                 <script>
-                    const delaunay_canvas = document.getElementById("delaunay");
-                    const console_delaunay_canvas = document.getElementById("console_delaunay");
-                    const console_delaunay_ctx = console_delaunay_canvas.getContext("2d");
+                    const flip_edge_canvas = document.getElementById("flip_edge");
+                    const console_flip_edge_canvas = document.getElementById("console_flip_edge");
+                    const console_flip_edge_ctx = console_flip_edge_canvas.getContext("2d");
     
                     console.log = function(message) {
-                        console_delaunay_ctx.clearRect(0, 0, console_delaunay_canvas.width, console_delaunay_canvas.height);
-                        console_delaunay_ctx.font = "14px Trebuchet MS"; // Increase the font size here
-                        console_delaunay_ctx.fillText(message, 0, 20);
+                        console_flip_edge_ctx.clearRect(0, 0, console_flip_edge_canvas.width, console_flip_edge_canvas.height);
+                        console_flip_edge_ctx.font = "14px Trebuchet MS"; // Increase the font size here
+                        console_flip_edge_ctx.fillText(message, 0, 20);
                     };
                     
                     //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
                     //flip_algorithm(mesh, delaunay_canvas);
-                    flip_delaunay_animated(nodeData, delaunay_canvas);
+                    flip_delaunay_animated(nodeData, flip_edge_canvas);
                     mesh = random_triangulation(nodeData);
-                    flip_algorithm(mesh, delaunay_canvas);
+                    flip_algorithm(mesh, flip_edge_canvas);
                 </script>
             </div>
 
             <div id="container_info">
                 <h1>Delaunay</h1>
                 <h2>Method: Flip Edge</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Facilisi nullam vehicula ipsum a. In nibh mauris cursus mattis molestie a. Pretium nibh ipsum consequat nisl vel pretium. 
+                    Vitae et leo duis ut diam quam. Urna cursus eget nunc scelerisque viverra. Ultrices tincidunt arcu non sodales neque. 
+                    Massa ultricies mi quis hendrerit dolor magna. Id porta nibh venenatis cras. Nulla aliquet porttitor lacus luctus accumsan. 
+                    Consectetur lorem donec massa sapien faucibus et molestie. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus. 
+                    Sit amet luctus venenatis lectus. Praesent elementum facilisis leo vel.
+                </p>
+            </div>
+
+        </div>
+
+        <div id="container">
+
+            <div id="container_canvas">
+                <canvas id="bowyer_watson" width="750" height="750"></canvas>
+                <canvas id="console_bowyer_watson" width="750" height="30"></canvas>
+    
+                <script>
+                    const bowyer_watson_canvas = document.getElementById("bowyer_watson");
+                    const console_bowyer_watson_canvas = document.getElementById("console_bowyer_watson");
+                    const console_bowyer_watson_ctx = console_bowyer_watson_canvas.getContext("2d");
+    
+                    console.log = function(message) {
+                        console_bowyer_watson_ctx.clearRect(0, 0, console_bowyer_watson_canvas.width, console_bowyer_watson_canvas.height);
+                        console_bowyer_watson_ctx.font = "14px Trebuchet MS"; // Increase the font size here
+                        console_bowyer_watson_ctx.fillText(message, 0, 20);
+                    };
+                    
+                    //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
+                    //flip_algorithm(mesh, delaunay_canvas);
+                    bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                </script>
+            </div>
+
+            <div id="container_info">
+                <h1>Delaunay</h1>
+                <h2>Method: Bowyer-Watson</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
                     Facilisi nullam vehicula ipsum a. In nibh mauris cursus mattis molestie a. Pretium nibh ipsum consequat nisl vel pretium. 
                     Vitae et leo duis ut diam quam. Urna cursus eget nunc scelerisque viverra. Ultrices tincidunt arcu non sodales neque. 

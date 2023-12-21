@@ -138,6 +138,42 @@ async function voronoi_animated(nodeData, canvas) {
 	console.log("Done!");
 }
 
+async function bowyer_triangulation_animated(nodes, canvas) {
+
+    var mesh = create_mesh_nodes(nodes);
+	clear_canvas(canvas);
+	draw_mesh(mesh, canvas);
+
+    console.log("Click to generate Super Triangle");
+	await waitForClick(canvas);
+
+    var nodes2tri = mesh.nodes;
+    mesh = super_triangle(mesh);
+	clear_canvas(canvas);
+	draw_mesh(mesh, canvas);
+
+    console.log("Click to generate Delaunay Triangulation");
+	await waitForClick(canvas);
+
+    for (node of nodes2tri) {
+        add_vertex(mesh, node);
+		clear_canvas(canvas);
+		draw_mesh(mesh, canvas);
+		await waitDelay(100);
+    }
+
+	await waitForClick(canvas);
+    var border = remove_super_triangle(mesh);
+
+    var convex_vertex = findConvex(mesh);
+    insert_convex(mesh, convex_vertex, border);
+	
+    clear_canvas(canvas);
+    draw_mesh(mesh, canvas);
+
+    return mesh;
+}
+
 function waitForClick(canvas) {
 	return new Promise(resolve => {
 		canvas.addEventListener('click', resolve);

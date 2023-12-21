@@ -55,7 +55,7 @@ body{
     text-align: justify;
 }
 
-#delaunay{
+#flip_edge{
     padding: 10px;
     border: 2px solid black;
     border-bottom: 0px;
@@ -63,7 +63,21 @@ body{
     
 }
 
-#console_delaunay{ 
+#console_flip_edge{ 
+    padding: 10px;
+    border: 2px solid black;
+    contain: content;
+}
+
+#bowyer_watson{
+    padding: 10px;
+    border: 2px solid black;
+    border-bottom: 0px;
+    contain: content;
+    
+}
+
+#console_bowyer_watson{ 
     padding: 10px;
     border: 2px solid black;
     contain: content;

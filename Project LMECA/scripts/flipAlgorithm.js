@@ -90,7 +90,7 @@ async function flip_algorithm_animated(mesh, canvas) {
 }
 
 function waitOneSecond() {
-    return new Promise(resolve => setTimeout(resolve, 500));
+    return new Promise(resolve => setTimeout(resolve, 50));
 }
 
 // Function to check if an edge is Delaunay

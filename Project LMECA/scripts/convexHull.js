@@ -2,6 +2,7 @@
 // =============== CONVEX HULL ===============
 // ===========================================
 
+
 /**
  * @brief           Calculates the cross-product between the vector to get orientation
  * @param A        	xy-coordinate of A
@@ -10,10 +11,14 @@
  * @returns         1: counterclockwise; 0: collinear; -1: clockwise;
  */
 function get_orientation(A, B, C) {
+
+    const ccw = orient2d(A[0], A[1], B[0], B[1], C[0], C[1]);
+
+    // to be consistent with the existing code
     // positive determinant
-    if (((C[1] - A[1])*(B[0] - A[0])) > ((B[1] - A[1])*(C[0] - A[0]))) return 1; 
-    // nolinear points
-    else if (((C[1] - A[1])*(B[0] - A[0])) == ((B[1] - A[1])*(C[0] - A[0]))) return 0; 
+    if (ccw > 0) return 1; 
+    // collinear points
+    else if (ccw = 0) return 0; 
     // negative determinant
     return -1;
 }
@@ -100,7 +105,6 @@ function findConvex(mesh) {
 	convexVertex.reverse();
     return convexVertex;
 }
-
 
 /**
  * @brief					Draw the outline of the convex hull

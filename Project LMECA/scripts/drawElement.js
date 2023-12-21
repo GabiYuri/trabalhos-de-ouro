@@ -2,6 +2,7 @@
 // =============== FUNCTIONS FOR DRAWING ON CANVAS ===============
 // ===============================================================
 
+
 /**
  * @brief               Adapt nodes dimensions to the canvas size
  * @param canvas        selected canvas

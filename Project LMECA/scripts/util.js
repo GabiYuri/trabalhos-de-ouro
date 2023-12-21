@@ -1,9 +1,9 @@
-export const epsilon = 1.1102230246251565e-16;
-export const splitter = 134217729;
-export const resulterrbound = (3 + 8 * epsilon) * epsilon;
+const epsilon = 1.1102230246251565e-16;
+const splitter = 134217729;
+const resulterrbound = (3 + 8 * epsilon) * epsilon;
 
 // fast_expansion_sum_zeroelim routine from oritinal code
-export function sum(elen, e, flen, f, h) {
+function sum(elen, e, flen, f, h) {
     let Q, Qnew, hh, bvirt;
     let enow = e[0];
     let fnow = f[0];
@@ -75,12 +75,12 @@ export function sum(elen, e, flen, f, h) {
     return hindex;
 }
 
-export function sum_three(alen, a, blen, b, clen, c, tmp, out) {
+function sum_three(alen, a, blen, b, clen, c, tmp, out) {
     return sum(sum(alen, a, blen, b, tmp), tmp, clen, c, out);
 }
 
 // scale_expansion_zeroelim routine from oritinal code
-export function scale(elen, e, b, h) {
+function scale(elen, e, b, h) {
     let Q, sum, hh, product1, product0;
     let bvirt, c, ahi, alo, bhi, blo;
 
@@ -122,17 +122,17 @@ export function scale(elen, e, b, h) {
     return hindex;
 }
 
-export function negate(elen, e) {
+function negate(elen, e) {
     for (let i = 0; i < elen; i++) e[i] = -e[i];
     return elen;
 }
 
-export function estimate(elen, e) {
+function estimate(elen, e) {
     let Q = e[0];
     for (let i = 1; i < elen; i++) Q += e[i];
     return Q;
 }
 
-export function vec(n) {
+function vec(n) {
     return new Float64Array(n);
 }

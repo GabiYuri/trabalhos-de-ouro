@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>LMECA2170 Project</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/style.css" type="text/css">
+
+        <script type="text/javascript" src="../scripts/drawElement.js"></script>
+		<script type="text/javascript" src="../scripts/pointLocation.js"></script>
+		<script type="text/javascript" src="../scripts/flipAlgorithm.js"></script>
+		<script type="text/javascript" src="../scripts/randomTrangulation.js"></script>
+		<script type="text/javascript" src="../scripts/convexHull.js"></script>
+		<script type="text/javascript" src="../scripts/bowyerTriangulation.js"></script>
+
+        <script type="text/javascript" src="../data/nodes_coarse.json"></script>
+    </head>
+
+    <body>
+        <div id="navbar">
+            <h1>Numerical Geometry</h1>
+            <div id="pages">
+                <a href="home.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="delaunay.html"><b>Delaunay</b></a>
+                <a href="voronoi.html">Voronoi</a>
+            </div>
+        </div>
+
+        <div id="container">
+            <p>home</p>
+            <canvas id="delaunay" width="750" height="750"></canvas>
+
+            <script>
+                const delaunay_canvas = document.getElementById("delaunay");
+                mesh = random_triangulation(nodeData, delaunay_canvas);
+                flip_algorithm(mesh, delaunay_canvas);
+            </script>
+
+        </div>
+
+    </body>
+
+</html>

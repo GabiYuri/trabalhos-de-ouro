@@ -278,9 +278,14 @@ function remove_super_triangle(mesh) {
         mesh.faces = mesh.faces.filter(item => item !== face);
     }
 
+    for (face of mesh.faces) {
+        face.id = mesh.faces.indexOf(face);
+    }
+
     // delete connected edges from mesh
     for (edge of edges) {
         mesh.edges = mesh.edges.filter(item => item !== edge);
+        mesh.edges = mesh.edges.filter(item => item !== edge.oppo);
     }
 
     // delete connected nodes from mesh

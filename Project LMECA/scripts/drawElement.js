@@ -62,7 +62,7 @@ function transform(pos, scale, xMin, yMin, offset) {
  * @param canvas        selected canvas
  */
 function draw_mesh(mesh, canvas) {
-	size_adapt(canvas, mesh.nodes, offset=0, margin=0.1);
+	size_adapt(canvas, mesh.nodes, offset=0);
 
 	// Draw triangles
 	var context = canvas.getContext('2d');

@@ -1,4 +1,4 @@
-async function flip_delaunay(nodes, canvas) {
+async function flip_delaunay_animated(nodes, canvas) {
     var mesh = create_mesh_nodes(nodes);
 	clear_canvas(canvas);
 	draw_mesh(mesh, canvas);
@@ -87,11 +87,30 @@ async function flip_algorithm_animated(mesh, canvas) {
     draw_mesh(mesh, canvas);
 }
 
-async function voronoi_animated(mesh, canvas) {
+async function voronoi_animated(nodeData, canvas) {
 
-	let vertex = [];
+	var mesh = create_mesh_nodes(nodeData);
+	clear_canvas(canvas);
+	draw_mesh(mesh, canvas);
+
+    console.log("Click to generate Delaunay Triangulation");
+	await waitForClick(canvas);
+
+	var convexVertex = findConvex(mesh);
+	var points2Triagulate = create_big_triangles(mesh, convexVertex);
+
+	for (point of points2Triagulate) {
+		create_new_triangle(point, mesh);
+	}
+
+    flip_algorithm(mesh, voronoi_canvas);
+	clear_canvas(voronoi_canvas);
+    draw_mesh(mesh, voronoi_canvas);
+
 	console.log("Click to generate Voronoi Diagram");
 	await waitForClick(canvas);
+
+	let vertex = [];
 
 	// For every triangle, draw the perpendicular bisector of each edge
 	for (face of mesh.faces) {
@@ -115,6 +134,8 @@ async function voronoi_animated(mesh, canvas) {
 		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, color="red");}
 		await waitDelay(100);
 	}
+
+	console.log("Done!");
 }
 
 function waitForClick(canvas) {

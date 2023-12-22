@@ -3,7 +3,7 @@
 // ====================================================
 
 // IMPORT SECTION =====================================
-import {create_mesh_nodes} from './randomTrangulation.js';
+import {create_mesh_nodes} from './randomTriangulation.js';
 import {draw_mesh} from './drawElement.js';
 import {get_orientation, findConvex} from './convexHull.js';
 

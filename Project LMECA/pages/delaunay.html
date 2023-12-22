@@ -31,6 +31,9 @@
     
                 <script type="module">
                     import {flip_delaunay_animated} from '../scripts/animations.js';
+                    import {draw_mesh} from '../scripts/drawElement.js';
+                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
+                    import {random_triangulation} from '../scripts/randomTriangulation.js';
 
                     const flip_edge_canvas = document.getElementById("flip_edge");
                     const console_flip_edge_canvas = document.getElementById("console_flip_edge");
@@ -42,11 +45,14 @@
                     //    console_flip_edge_ctx.fillText(message, 0, 20);
                     //};
                     
-                    //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
-                    //flip_algorithm(mesh, delaunay_canvas);
+                    // ANIMATED FLIP EDGE ALGORITHM
                     flip_delaunay_animated(nodeData, flip_edge_canvas);
-                    //mesh = random_triangulation(nodeData);
+
+                    // NO ANIMATION
+                    //var mesh = random_triangulation(nodeData);
                     //flip_algorithm(mesh, flip_edge_canvas);
+                    //draw_mesh(mesh, flip_edge_canvas);
+                    
                 </script>
             </div>
 
@@ -72,6 +78,7 @@
     
                 <script type="module">
                     import {bowyer_triangulation_animated} from '../scripts/animations.js';
+                    import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
 
                     const bowyer_watson_canvas = document.getElementById("bowyer_watson");
                     const console_bowyer_watson_canvas = document.getElementById("console_bowyer_watson");
@@ -82,10 +89,13 @@
                     //    console_bowyer_watson_ctx.font = "14px Trebuchet MS"; // Increase the font size here
                     //    console_bowyer_watson_ctx.fillText(message, 0, 20);
                     //};
-                    
-                    bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
-                    //flip_algorithm(mesh, delaunay_canvas);
-                    //debug(nodeData, bowyer_watson_canvas);
+
+                    // ANIMATED BOWYER-WATSON ALGORITHM
+                    //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+
+                    // NO ANIMATION
+                    bowyer_triangulation(nodeData, bowyer_watson_canvas);
+
                 </script>
             </div>
 

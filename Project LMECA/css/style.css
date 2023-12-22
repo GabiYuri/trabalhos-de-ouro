@@ -1,6 +1,7 @@
 body{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: black;;
+    font-size: 14px;
 }
 
 #navbar{
@@ -26,7 +27,7 @@ body{
     text-decoration: none;
     color: black;
     padding: 0 20px;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 #pages a:hover{
@@ -110,8 +111,6 @@ body{
     
 }
 
-
-
 #voronoi{
     padding: 10px;
     border: 2px solid black;
@@ -132,6 +131,12 @@ body{
     contain: content;
 }
 
-h1, h2 {
+#home_container h1{
     text-align: justify;
+    font-size: 24px;
+}
+
+#home_container h2{
+    text-align: justify;
+    font-size: 18px;
 }

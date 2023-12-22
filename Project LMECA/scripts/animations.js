@@ -167,7 +167,7 @@ async function bowyer_triangulation_animated(nodes, canvas) {
     console.log("Click to generate Delaunay Triangulation");
 	await waitForClick(canvas);
 
-    for (node of nodes2tri) {
+    for (let node of nodes2tri) {
         add_vertex(mesh, node);
 		clear_canvas(canvas);
 		draw_mesh(mesh, canvas);
@@ -176,9 +176,14 @@ async function bowyer_triangulation_animated(nodes, canvas) {
 
 	await waitForClick(canvas);
     var border = remove_super_triangle(mesh);
+	clear_canvas(canvas);
+    draw_mesh(mesh, canvas);
+
+	await waitForClick(canvas);
 
     var convex_vertex = findConvex(mesh);
     insert_convex(mesh, convex_vertex, border);
+	console.log(convex_vertex);
 	
     clear_canvas(canvas);
     draw_mesh(mesh, canvas);

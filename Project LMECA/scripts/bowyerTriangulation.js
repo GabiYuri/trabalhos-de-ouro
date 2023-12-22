@@ -306,8 +306,6 @@ function remove_super_triangle(mesh) {
         
         // edge na borda virada para fora        
         if (!mesh.edges.includes(edge.next) && !mesh.edges.includes(edge.next.oppo)) {
-            border.push(edge);
-
             let orig = edge.oppo.orig;
             let dest = edge.oppo.dest;
             let face = edge.oppo.incidentFace;
@@ -318,6 +316,8 @@ function remove_super_triangle(mesh) {
             edge.incidentFace = face;
             edge.next = next;
             edge.oppo = null;
+
+            border.push(edge);
         }
         
     }
@@ -331,15 +331,15 @@ function insert_convex (mesh, convex, border) {
         // look if there is a border edge that matches the new edge
         let exist = false;
         for (let j = 0; j < border.length; j++) {
-            if (convex[(i+1)%convex.length] == border[j].orig && convex[i] == border[j].dest) {
+            if (convex[i] == border[j].orig && convex[(i+1)%convex.length] == border[j].dest) {
                 exist = true;
             }
         }
 
         if (!exist) {
             var edge = {
-                    orig: convex[(i+1)%convex.length],
-                    dest: convex[i],
+                    orig: convex[i],
+                    dest: convex[(i+1)%convex.length],
                     incidentFace: null,
                     next: null,
                     oppo: null

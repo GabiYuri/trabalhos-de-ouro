@@ -36,11 +36,11 @@
                     const console_flip_edge_canvas = document.getElementById("console_flip_edge");
                     const console_flip_edge_ctx = console_flip_edge_canvas.getContext("2d");
     
-                    console.log = function(message) {
-                        console_flip_edge_ctx.clearRect(0, 0, console_flip_edge_canvas.width, console_flip_edge_canvas.height);
-                        console_flip_edge_ctx.font = "14px Trebuchet MS"; // Increase the font size here
-                        console_flip_edge_ctx.fillText(message, 0, 20);
-                    };
+                    //console.log = function(message) {
+                    //    console_flip_edge_ctx.clearRect(0, 0, console_flip_edge_canvas.width, console_flip_edge_canvas.height);
+                    //    console_flip_edge_ctx.font = "14px Trebuchet MS"; // Increase the font size here
+                    //    console_flip_edge_ctx.fillText(message, 0, 20);
+                    //};
                     
                     //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
                     //flip_algorithm(mesh, delaunay_canvas);
@@ -70,18 +70,20 @@
                 <canvas id="bowyer_watson" width="750" height="750"></canvas>
                 <canvas id="console_bowyer_watson" width="750" height="30"></canvas>
     
-                <script>
+                <script type="module">
+                    import {bowyer_triangulation_animated} from '../scripts/animations.js';
+
                     const bowyer_watson_canvas = document.getElementById("bowyer_watson");
                     const console_bowyer_watson_canvas = document.getElementById("console_bowyer_watson");
                     const console_bowyer_watson_ctx = console_bowyer_watson_canvas.getContext("2d");
     
-                    console.log = function(message) {
-                        console_bowyer_watson_ctx.clearRect(0, 0, console_bowyer_watson_canvas.width, console_bowyer_watson_canvas.height);
-                        console_bowyer_watson_ctx.font = "14px Trebuchet MS"; // Increase the font size here
-                        console_bowyer_watson_ctx.fillText(message, 0, 20);
-                    };
+                    //console.log = function(message) {
+                    //    console_bowyer_watson_ctx.clearRect(0, 0, console_bowyer_watson_canvas.width, console_bowyer_watson_canvas.height);
+                    //    console_bowyer_watson_ctx.font = "14px Trebuchet MS"; // Increase the font size here
+                    //    console_bowyer_watson_ctx.fillText(message, 0, 20);
+                    //};
                     
-                    //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                    bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
                     //flip_algorithm(mesh, delaunay_canvas);
                     //debug(nodeData, bowyer_watson_canvas);
                 </script>

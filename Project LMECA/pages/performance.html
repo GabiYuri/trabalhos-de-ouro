@@ -39,9 +39,12 @@
 
                     // How the time is measured for the performance test
                     const startTime = performance.now();
+                    
+                    // Flip algorithm
                     //var mesh = random_triangulation(nodeData);
                     //flip_algorithm(mesh, performance_canvas);
 
+                    // Bowyer-Watson algorithm
                     var mesh = bowyer_triangulation(nodeData);
                     draw_mesh(mesh, performance_canvas);
 

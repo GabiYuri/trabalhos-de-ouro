@@ -111,6 +111,13 @@ body{
     
 }
 
+#input_bowyer{
+    padding: 10px;
+    border: 2px solid black;
+    contain: content;
+    
+}
+
 #voronoi{
     padding: 10px;
     border: 2px solid black;

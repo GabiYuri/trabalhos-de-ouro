@@ -26,6 +26,7 @@
 
         <div id="super_container">
             <div>
+                <p>It is possible to see the result of the Triangulation using the Flip Algorithm and the Bowyer-Watson Algorithm. Also, scrolling down, it is possible to see the Voronoi Diagram of the set of nodes from the input file.</p>
                 <p><i>Make sure to have your file uploaded in the directory 'data' and named 'input_file.json', following the structure mentioned in the README</i></p>
             </div>
             <div id="container">
@@ -42,118 +43,147 @@
                         const input_delaunay_canvas = document.getElementById("input_delaunay");
     
                         // NO ANIMATION
-                        //var mesh = random_triangulation(inputData);
-                        //flip_algorithm(mesh, input_delaunay_canvas);
-                        var mesh = bowyer_triangulation(inputData, input_delaunay_canvas);
+                        var mesh = random_triangulation(inputData);
+                        flip_algorithm(mesh, input_delaunay_canvas);
+                        //var mesh = bowyer_triangulation(inputData, input_delaunay_canvas);
                         draw_mesh(mesh, input_delaunay_canvas);
                         
                     </script>
     
                     
                 </div>
-    
+
                 <div id="container_canvas">
-                    <h3>Voronoi Diagram: zoom available</h3>
-                    <canvas id="bowyer_watson" width="600" height="600"></canvas>
+                    <h3>Delaunay Triangulation (Bowyer-Watson Algorithm)</h3>
+                    <canvas id="input_bowyer" width="600" height="600"></canvas>
         
                     <script type="module">
-                        import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
-                        import {voronoi} from '../scripts/flipAlgorithm.js';
                         import {draw_mesh} from '../scripts/drawElement.js';
                         import {flip_algorithm} from '../scripts/flipAlgorithm.js';
                         import {random_triangulation} from '../scripts/randomTriangulation.js';
+                        import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
     
-                        const bowyer_watson_canvas = document.getElementById("bowyer_watson");
-    
-                        // ANIMATED BOWYER-WATSON ALGORITHM
-                        //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
-                        
+                        const input_bowyer_canvas = document.getElementById("input_bowyer");
     
                         // NO ANIMATION
-                        //var mesh = bowyer_triangulation(inputData);
-                        var mesh = random_triangulation(inputData);
-                        flip_algorithm(mesh, bowyer_watson_canvas);
-
-                        const ctx = bowyer_watson_canvas.getContext("2d");
-
-                        // Variables for zooming
-                        let scale = 1;
-                        let offsetX = 0;
-                        let offsetY = 0;
-                        let isDragging = false;
-                        let startDragX, startDragY;
-
-                        function draw() {
-                            // Clear the entire canvas
-                            ctx.clearRect(-10000, -10000, (bowyer_watson_canvas.width)*1000, (bowyer_watson_canvas.height)*1000);
-
-                            // Draw your content here
-                            ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
-                            flip_algorithm(mesh, bowyer_watson_canvas);
-                            draw_mesh(mesh, bowyer_watson_canvas);
-                            voronoi(mesh, bowyer_watson_canvas);
-                            
-                        }
-
-		
-                        function zoomIn() {
-                            scale += 0.1;
-                            draw();
-                        }
-
-                        function zoomOut() {
-                            if (scale > 0.5) {
-                                scale -= 0.1;
-                                draw();
-                            }
-                        }
-
-                        function handleScroll(event) {
-                            if (event.deltaY < 0) {
-                                zoomIn();
-                            } else {
-                                zoomOut();
-                            }
-                        }
-
-                        function handleMouseDown(event) {
-                            isDragging = true;
-                            startDragX = event.clientX - offsetX;
-                            startDragY = event.clientY - offsetY;
-                        }
-
-                        function handleMouseMove(event) {
-                            if (isDragging) {
-                                offsetX = event.clientX - startDragX;
-                                offsetY = event.clientY - startDragY;
-                                draw();
-                            }
-                        }
-
-                        function handleMouseUp() {
-                            isDragging = false;
-                        }
-
-                        function handleMouseLeave() {
-                            isDragging = false;
-                        }
-
-                        // Event listeners
-                        bowyer_watson_canvas.addEventListener("wheel", handleScroll);
-                        bowyer_watson_canvas.addEventListener("mousedown", handleMouseDown);
-                        bowyer_watson_canvas.addEventListener("mousemove", handleMouseMove);
-                        bowyer_watson_canvas.addEventListener("mouseup", handleMouseUp);
-                        bowyer_watson_canvas.addEventListener("mouseleave", handleMouseLeave);
-
-                        // Initial draw
-                        draw();
-    
+                        //var mesh = random_triangulation(inputData);
+                        //flip_algorithm(mesh, input_delaunay_canvas);
+                        var mesh = bowyer_triangulation(inputData, input_bowyer_canvas);
+                        draw_mesh(mesh, input_bowyer_canvas);
+                        
                     </script>
     
                     
                 </div>
+    
+                
             </div>
            
+            <div id="container_canvas">
+                <h3>Voronoi Diagram: zoom available</h3>
+                <canvas id="bowyer_watson" width="600" height="600"></canvas>
+    
+                <script type="module">
+                    import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
+                    import {voronoi} from '../scripts/flipAlgorithm.js';
+                    import {draw_mesh} from '../scripts/drawElement.js';
+                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
+                    import {random_triangulation} from '../scripts/randomTriangulation.js';
+
+                    const bowyer_watson_canvas = document.getElementById("bowyer_watson");
+
+                    // when mouse is on canvas, don't scroll down the page
+                    bowyer_watson_canvas.addEventListener("wheel", function(event){
+                        event.preventDefault();
+                    });
+
+                    // ANIMATED BOWYER-WATSON ALGORITHM
+                    //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                    
+
+                    // NO ANIMATION
+                    //var mesh = bowyer_triangulation(inputData);
+                    var mesh = random_triangulation(inputData);
+                    flip_algorithm(mesh, bowyer_watson_canvas);
+
+                    const ctx = bowyer_watson_canvas.getContext("2d");
+
+                    // Variables for zooming
+                    let scale = 1;
+                    let offsetX = 0;
+                    let offsetY = 0;
+                    let isDragging = false;
+                    let startDragX, startDragY;
+
+                    function draw() {
+                        // Clear the entire canvas
+                        ctx.clearRect(-10000, -10000, (bowyer_watson_canvas.width)*1000, (bowyer_watson_canvas.height)*1000);
+
+                        // Draw your content here
+                        ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+                        flip_algorithm(mesh, bowyer_watson_canvas);
+                        draw_mesh(mesh, bowyer_watson_canvas);
+                        voronoi(mesh, bowyer_watson_canvas);
+                        
+                    }
+
+    
+                    function zoomIn() {
+                        scale += 0.1;
+                        draw();
+                    }
+
+                    function zoomOut() {
+                        if (scale > 0.5) {
+                            scale -= 0.1;
+                            draw();
+                        }
+                    }
+
+                    function handleScroll(event) {
+                        if (event.deltaY < 0) {
+                            zoomIn();
+                        } else {
+                            zoomOut();
+                        }
+                    }
+
+                    function handleMouseDown(event) {
+                        isDragging = true;
+                        startDragX = event.clientX - offsetX;
+                        startDragY = event.clientY - offsetY;
+                    }
+
+                    function handleMouseMove(event) {
+                        if (isDragging) {
+                            offsetX = event.clientX - startDragX;
+                            offsetY = event.clientY - startDragY;
+                            draw();
+                        }
+                    }
+
+                    function handleMouseUp() {
+                        isDragging = false;
+                    }
+
+                    function handleMouseLeave() {
+                        isDragging = false;
+                    }
+
+                    // Event listeners
+                    bowyer_watson_canvas.addEventListener("wheel", handleScroll);
+                    bowyer_watson_canvas.addEventListener("mousedown", handleMouseDown);
+                    bowyer_watson_canvas.addEventListener("mousemove", handleMouseMove);
+                    bowyer_watson_canvas.addEventListener("mouseup", handleMouseUp);
+                    bowyer_watson_canvas.addEventListener("mouseleave", handleMouseLeave);
+
+                    // Initial draw
+                    draw();
+
+                </script>
+
+                
+            </div>
         </div>
 
     </body>

@@ -43,6 +43,7 @@ function flip_algorithm(mesh, canvas) {
 			}
 		}	
 	}
+
 }
 
 /**

@@ -10,6 +10,11 @@ import {get_orientation, compare_bottomMost, findConvex, drawConvex} from './con
 import { super_triangle, add_vertex, remove_super_triangle, insert_convex, bowyer_triangulation} from './bowyerTriangulation.js';
 
 
+/**
+ * @brief				Animated flip algorithm for Delaunay Triangulation
+ * @param nodes 		Array of nodes to be triangulated
+ * @param canvas		Selected canvas 
+ */
 async function flip_delaunay_animated(nodes, canvas) {
     var mesh = create_mesh_nodes(nodes);
 	clear_canvas(canvas);
@@ -42,6 +47,12 @@ async function flip_delaunay_animated(nodes, canvas) {
 	flip_algorithm_animated(mesh, canvas);
 }
 
+
+/**
+ * @brief				Animated flip algorithm for Delaunay Triangulation
+ * @param mesh 			Mesh structure as doubly-connected edge list
+ * @param canvas 		Selected canvas
+ */
 async function flip_algorithm_animated(mesh, canvas) {
 
 	// Insert all the internal edges of the triangulation in a stack
@@ -99,6 +110,12 @@ async function flip_algorithm_animated(mesh, canvas) {
     draw_mesh(mesh, canvas);
 }
 
+
+/**
+ * @brief				Animated Voronoi Diagram generation
+ * @param nodeData      Array of nodes to be triangulated
+ * @param canvas 		Selected canvas
+ */
 async function voronoi_animated(nodeData, canvas) {
 
 	var mesh = create_mesh_nodes(nodeData);
@@ -231,6 +248,13 @@ async function voronoi_animated(nodeData, canvas) {
 	console.log("Done!");
 }
 
+
+/**
+ * @brief				Animated Bowyer-Watson Algorithm for Delaunay Triangulation
+ * @param nodes 		Array of nodes to be triangulated
+ * @param canvas 		Selected canvas
+ * @returns 
+ */
 async function bowyer_triangulation_animated(nodes, canvas) {
 
     var mesh = create_mesh_nodes(nodes);
@@ -270,6 +294,13 @@ async function bowyer_triangulation_animated(nodes, canvas) {
     return mesh;
 }
 
+
+/**
+ * @brief				Animated Convex Hull generation
+ * @param nodeData		Array of nodes to be triangulated  
+ * @param canvas 		Selected canvas
+ * @returns 
+ */
 async function findConvex_animated(nodeData, canvas) {
 
 	var mesh = create_mesh_nodes(nodeData);
@@ -343,12 +374,24 @@ async function findConvex_animated(nodeData, canvas) {
     return convexVertex;
 }
 
+
+/**
+ * @brief				Wait for a click in the canvas
+ * @param canvas 		Selected canvas
+ * @returns 
+ */
 function waitForClick(canvas) {
 	return new Promise(resolve => {
 		canvas.addEventListener('click', resolve);
 	});
 }
 
+
+/**
+ * @brief				Wait for a delay
+ * @param ms 			Desired delay
+ * @returns 
+ */
 function waitDelay(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }

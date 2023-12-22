@@ -7,6 +7,7 @@ import {check_intersection} from './pointLocation.js';
 import {draw_point, draw_edge, draw_circle, size_adapt} from './drawElement.js';
 import {distance, get_orientation} from './convexHull.js';
 import {circumcenter} from './bowyerTriangulation.js';
+import { incircle } from '../node_modules/robust-predicates/index.js';
 
 
 /**
@@ -90,6 +91,20 @@ function isDelaunay(edge, canvas, animated=false) {
         return false;
     }
 
+	if (incircle(B[0], B[1], A[0], A[1], C2[0], C2[1], C1[0], C1[1]) < 0) {
+		// C1 is inside the circumcircle of A, B and C2
+		if (animated) console.log("Point C1 is inside the circumcircle of A, B and C2.");
+		return false;
+	}
+
+	if (incircle(A[0], A[1], B[0], B[1], C1[0], C1[1], C2[0], C2[1]) < 0) {
+		// C2 is inside the circumcircle of A, B and C1
+		if (animated) console.log("Point C2 is inside the circumcircle of A, B and C1.");
+		return false;
+	}
+
+	
+	/*
 	// check if point C1 is inside the circumcircle of A, B and C2
 	if (distance([xc2, yc2], C1) < rc2) {
 		if (animated) console.log("Point C1 is inside the circumcircle of A, B and C2.");
@@ -100,7 +115,7 @@ function isDelaunay(edge, canvas, animated=false) {
 	if (distance([xc1, yc1], C2) < rc1) {
 		if (animated) console.log("Point C2 is inside the circumcircle of A, B and C1.");
 		return false;
-	} 
+	} */
 
 	return true;
 

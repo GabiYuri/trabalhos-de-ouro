@@ -103,20 +103,6 @@ function isDelaunay(edge, canvas, animated=false) {
 		return false;
 	}
 
-	
-	/*
-	// check if point C1 is inside the circumcircle of A, B and C2
-	if (distance([xc2, yc2], C1) < rc2) {
-		if (animated) console.log("Point C1 is inside the circumcircle of A, B and C2.");
-		return false;
-	}
-
-	// check if point C2 is inside the circumcircle of A, B and C1
-	if (distance([xc1, yc1], C2) < rc1) {
-		if (animated) console.log("Point C2 is inside the circumcircle of A, B and C1.");
-		return false;
-	} */
-
 	return true;
 
 }

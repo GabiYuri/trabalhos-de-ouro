@@ -4,7 +4,7 @@
 
 // IMPORT SECTION =====================================
 import { create_mesh_nodes, create_big_triangles, create_new_triangle } from './randomTriangulation.js';
-import { isDelaunay, flipEdge, perpendicular_bisector, intersection_point} from './flipAlgorithm.js';
+import { isDelaunay, flipEdge, perpendicular_bisector, intersection_point, flip_algorithm} from './flipAlgorithm.js';
 import {draw_mesh, clear_canvas, draw_edge} from './drawElement.js';
 import {get_orientation, compare_bottomMost, findConvex, drawConvex} from './convexHull.js';
 import { super_triangle, add_vertex, remove_super_triangle, insert_convex, bowyer_triangulation} from './bowyerTriangulation.js';
@@ -109,18 +109,21 @@ async function voronoi_animated(nodeData, canvas) {
 	await waitForClick(canvas);
 
 	// flip algorithm 
-	/*
+	
+	
 	var convexVertex = findConvex(mesh);
 	var points2Triagulate = create_big_triangles(mesh, convexVertex);
 
 	for (let point of points2Triagulate) {
 		create_new_triangle(point, mesh);
-	} 
-	flip_algorithm(mesh, canvas);
-	*/
+	}
 
-    // bowyer algorithm
-	mesh = bowyer_triangulation(nodeData, canvas);
+    flip_algorithm(mesh, canvas);
+
+
+	// bowyer algorithm
+	/*
+	mesh = bowyer_triangulation(nodeData, canvas);*/
 	clear_canvas(canvas);
     draw_mesh(mesh, canvas);
 

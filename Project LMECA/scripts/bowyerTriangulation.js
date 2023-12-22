@@ -9,6 +9,12 @@ import {get_orientation, findConvex, drawConvex} from './convexHull.js';
 import { incircle } from '../node_modules/robust-predicates/index.js';
 
 
+/**
+ * @brief 			Perform Bowyer-Watson triangulation
+ * @param nodes     Array of nodes
+ * @param canvas    Selected canvas
+ * @returns         Mesh structure as doubly-connected edge list
+ */
 function bowyer_triangulation(nodes,canvas) {
     var mesh = create_mesh_nodes(nodes);
     var nodes2tri = mesh.nodes;
@@ -28,6 +34,12 @@ function bowyer_triangulation(nodes,canvas) {
     return mesh;
 }
 
+
+/**
+ * @brief 			Create the super triangle around the nodes
+ * @param mesh      Mesh structure as doubly-connected edge list
+ * @returns         Mesh structure as doubly-connected edge list
+ */
 function super_triangle(mesh) {
 	// get midpoint of the mesh
 	const [x, y] = midpoint(mesh);
@@ -86,7 +98,11 @@ function super_triangle(mesh) {
     return mesh;
 }
 
-// Create a function to get the bounding box of the mesh
+/**
+ * @brief           Get the size of the diagonal of the bounding box
+ * @param mesh      Mesh structure as doubly-connected edge list 
+ * @returns 
+ */
 function bounding_box(mesh) {
 	// get the extreme points of the mesh
 	let [xMin, yMin, xMax, yMax] = extreme_points(mesh);
@@ -96,7 +112,12 @@ function bounding_box(mesh) {
 	return diagonal;
 }
 
-// Get the coordinates of the midpoint of the bounding box 
+
+/**
+ * @brief               Get the coordinates of the midpoint of the bounding box
+ * @param mesh          Mesh structure as doubly-connected edge list
+ * @returns             Coordinates of the midpoint
+ */ 
 function midpoint(mesh) {
 	// get the extreme points of the mesh
 	let [xMin, yMin, xMax, yMax] = extreme_points(mesh);
@@ -108,7 +129,12 @@ function midpoint(mesh) {
 	return [x, y];
 }
 
-// Create a function to get the extreme points of the mesh
+
+/**
+ * @brief           Get the extreme points of the mesh
+ * @param mesh      Mesh structure as doubly-connected edge list
+ * @returns         Extreme points of the mesh
+ */
 function extreme_points(mesh) {
 	let xMin = Number.MAX_VALUE;
 	let yMin = Number.MAX_VALUE;
@@ -125,7 +151,15 @@ function extreme_points(mesh) {
 	return [xMin, yMin, xMax, yMax];
 }
 
+
 // Create a function that, for three points, returns the circumcenter and the circumradius
+/**
+ * @brief           Get the circumcenter and the circumradius of the triangle
+ * @param A         Coordinates of the first point
+ * @param B         Coordinates of the second point
+ * @param C         Coordinates of the third point
+ * @returns         Coordinates of the circumcenter and the circumradius
+ */
 function circumcenter(A, B, C) {
 	// check if the points are collinear
 	if (get_orientation(A, B, C) == 0) return null;
@@ -140,6 +174,13 @@ function circumcenter(A, B, C) {
 	return [x, y, r];
 }
 
+
+/**
+ * @brief           Add a vertex to the mesh
+ * @param mesh      Mesh structure as doubly-connected edge list 
+ * @param vertex    Vertex to be added
+ * @returns         Mesh structure as doubly-connected edge list
+ */
 function add_vertex(mesh, vertex) {
 
     var edges = [];
@@ -184,6 +225,12 @@ function add_vertex(mesh, vertex) {
     return mesh;
 }
 
+
+/**
+ * @brief           Find the unique values of an array
+ * @param arr       Array to be analyzed 
+ * @returns         Array of unique values and array of repeated values
+ */
 function find_unique_values(arr) {
     let uniqueValues = [];
     let repetedValues = [];
@@ -200,11 +247,13 @@ function find_unique_values(arr) {
     return [uniqueValues, repetedValues];
 }
 
+
 /**
- * @brief 					Triangulate the convex hull with one point inside
- * @param mesh 				mesh structure as doubly-connected edge list
- * @param convexVertex 		array of vertices of the convex hull
- * @returns 				array of points to triangulate
+ * @brief           Create the triangles of the polygon
+ * @param mesh      Mesh structure as doubly-connected edge list 
+ * @param edges     Edges of the polygon 
+ * @param vertex    Vertex to be added
+ * @returns 
  */
 function polygon_triangles(mesh, edges, vertex) {
     
@@ -257,6 +306,12 @@ function polygon_triangles(mesh, edges, vertex) {
     return mesh
 }
 
+
+/**
+ * @brief           Remove the super triangle from the mesh
+ * @param mesh      Mesh structure as doubly-connected edge list
+ * @returns         Array of edges that are on the border of the mesh
+ */
 function remove_super_triangle(mesh) {
     var vertex = [mesh.nodes[mesh.nodes.length-3], mesh.nodes[mesh.nodes.length-2], mesh.nodes[mesh.nodes.length-1]];
 
@@ -301,8 +356,6 @@ function remove_super_triangle(mesh) {
         
         // edge na borda virada para fora        
         if (!mesh.edges.includes(edge.next) && !mesh.edges.includes(edge.next.oppo)) {
-            console.log("fora");
-            console.log(edge)
 
             let origedge = edge.orig;
             let destedge = edge.dest;
@@ -322,21 +375,36 @@ function remove_super_triangle(mesh) {
             border.push(edge);
         }
         else if (!mesh.edges.includes(edge.oppo.next) && !mesh.edges.includes(edge.oppo.next.oppo)){
-            console.log("dentro");
-            console.log(edge);
             //console.log(edge);
+
+            let origedge = edge.orig;
+            let destedge = edge.dest;
+            let next = edge.next;
+            let nextnext = edge.next.next;
+            let face = edge.incidentFace;
+
+            edge.orig = origedge;
+            edge.dest = destedge;
+            edge.next = next;
+            edge.next.next = nextnext;
+            edge.next.next.next = edge;
             edge.oppo = null;
-            edge.next.next.next.oppo = null;
+            edge.incidentFace = face;
             
             border.push(edge);
         }
         
     }
-
-    console.log(border);
     return border;
 }
 
+
+/**
+ * @brief           Insert the convex hull into the mesh
+ * @param mesh      Mesh structure as doubly-connected edge list
+ * @param convex    Array of vertices of the convex hull 
+ * @param border    Array of edges that are on the border of the mesh
+ */
 function insert_convex (mesh, convex, border) {
 
     for (let i = 0; i < convex.length; i++) {

@@ -19,9 +19,9 @@ function bowyer_triangulation(nodes,canvas) {
     }
     
     var border = remove_super_triangle(mesh);
-    //var convex_vertex = findConvex(mesh);
+    var convex_vertex = findConvex(mesh);
     
-    //insert_convex(mesh, convex_vertex, border);
+    insert_convex(mesh, convex_vertex, border);
     
     //draw_mesh(mesh, canvas);
 
@@ -299,27 +299,36 @@ function remove_super_triangle(mesh) {
         
         // edge na borda virada para fora        
         if (!mesh.edges.includes(edge.next) && !mesh.edges.includes(edge.next.oppo)) {
-            //console.log(edge)
+            console.log("fora");
+            console.log(edge)
+
             let orig = edge.oppo.orig;
             let dest = edge.oppo.dest;
             let face = edge.oppo.incidentFace;
             let next = edge.oppo.next;
 
+            edge.oppo = null;
             edge.orig = orig;
             edge.dest = dest;
             edge.incidentFace = face;
             edge.next = next;
-            edge.oppo = null;
+            
 
             border.push(edge);
         }
         else if (!mesh.edges.includes(edge.oppo.next) && !mesh.edges.includes(edge.oppo.next.oppo)){
+            console.log("dentro");
+            console.log(edge);
             //console.log(edge);
             edge.oppo = null;
+            edge.next.next.next.oppo = null;
+            
             border.push(edge);
         }
         
     }
+
+    console.log(border);
     return border;
 }
 

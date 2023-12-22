@@ -16,21 +16,12 @@ import {orient2d} from '../node_modules/robust-predicates/index.js';
 function get_orientation(A, B, C) {
     
     const ccw = orient2d(A[0], A[1], B[0], B[1], C[0], C[1]);
-
-    // to be consistent with the existing code
     // positive determinant
     if (ccw > 0) return 1; 
     // collinear points
     else if (ccw === 0) return 0; 
     // negative determinant
     return -1;
-    /*
-    // positive determinant
-    if (((C[1] - A[1])*(B[0] - A[0])) > ((B[1] - A[1])*(C[0] - A[0]))) return 1; 
-    // nolinear points
-    else if (((C[1] - A[1])*(B[0] - A[0])) == ((B[1] - A[1])*(C[0] - A[0]))) return 0; 
-    // negative determinant
-    return -1;*/
 }
 
 

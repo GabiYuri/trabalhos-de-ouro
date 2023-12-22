@@ -6,6 +6,7 @@
 import {create_mesh_nodes} from './randomTriangulation.js';
 import {draw_mesh} from './drawElement.js';
 import {get_orientation, findConvex, drawConvex} from './convexHull.js';
+import { incircle } from '../node_modules/robust-predicates/index.js';
 
 
 function bowyer_triangulation(nodes,canvas) {
@@ -139,23 +140,15 @@ function circumcenter(A, B, C) {
 	return [x, y, r];
 }
 
-function inCircle(triangle, vertex) {
-    let nodes = [triangle.incidentEdge.orig, triangle.incidentEdge.dest, triangle.incidentEdge.next.dest];
-    let circle = circumcenter(nodes[0].pos, nodes[1].pos, nodes[2].pos);
-
-    if (circle == null) return false;
-    let dx = circle[0] - vertex.pos[0];
-    let dy = circle[1] - vertex.pos[1];
-    return Math.sqrt(dx * dx + dy * dy) <= circle[2];
-}
-
 function add_vertex(mesh, vertex) {
 
     var edges = [];
     var faces = [];
 
     for (let triangle of mesh.faces) {
-        if (inCircle(triangle, vertex)) {
+        let tri_nodes = [triangle.incidentEdge.orig.pos, triangle.incidentEdge.dest.pos, triangle.incidentEdge.next.dest.pos];
+        if (incircle(tri_nodes[0][0], tri_nodes[0][1], tri_nodes[1][0], tri_nodes[1][1], tri_nodes[2][0], tri_nodes[2][1], vertex.pos[0], vertex.pos[1]) < 0) {
+            // vertex is inside the circumcircle of the triangle
             edges.push(triangle.incidentEdge);
             edges.push(triangle.incidentEdge.next);
             edges.push(triangle.incidentEdge.next.next);
@@ -392,4 +385,4 @@ function insert_convex (mesh, convex, border) {
     }
 }
 
-export { bowyer_triangulation, super_triangle, bounding_box, midpoint, extreme_points, circumcenter, inCircle, add_vertex, find_unique_values, polygon_triangles, remove_super_triangle, insert_convex}
+export { bowyer_triangulation, super_triangle, bounding_box, midpoint, extreme_points, circumcenter, add_vertex, find_unique_values, polygon_triangles, remove_super_triangle, insert_convex}

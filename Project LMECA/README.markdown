@@ -1,3 +1,5 @@
+# LMECA2170 Numerical Geometry - Project
+### Authors: Gabriel de Morais Pires and Gabriela Ishikawa
 
 This document provides an overview of what we have implemented and what has been submitted for evaluation. 
 

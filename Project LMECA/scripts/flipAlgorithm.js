@@ -4,7 +4,7 @@
 
 // IMPORT SECTION =====================================
 import {check_intersection} from './pointLocation.js';
-import {draw_point, draw_edge, draw_circle} from './drawElement.js';
+import {draw_point, draw_edge, draw_circle, size_adapt} from './drawElement.js';
 import {distance} from './convexHull.js';
 import {circumcenter} from './bowyerTriangulation.js';
 
@@ -223,6 +223,7 @@ function intersection_point(m1, b1, m2, b2, canvas) {
  * @param canvas 		selected canvas
  */
 function voronoi(mesh, canvas) {
+	size_adapt(canvas, mesh.nodes, 0);
 
 	// the index of this array also represents the id of the delaunay-face related to this vertex
 	let vertex = [];
@@ -244,6 +245,7 @@ function voronoi(mesh, canvas) {
 		if (face.incidentEdge.oppo != null) {let n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
 		if (face.incidentEdge.next.oppo != null) {let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
 		if (face.incidentEdge.next.next.oppo != null) {let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
+		
 	}
 }
 

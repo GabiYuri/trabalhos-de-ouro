@@ -6,7 +6,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="../css/style.css" type="text/css">        
 
-        <script type="text/javascript" src="../data/nodes_coarse.json"></script>
+        <script type="text/javascript" src="../data/input_file.json"></script>
     </head>
 
     <body>
@@ -17,7 +17,7 @@
                 <a href="home.html">Home</a>
                 <a href="about.html">About</a>
                 <a href="convex.html">Convex Hull</a>
-                <a href="delaunay.html"><b style="text-decoration: underline;">Delaunay</b></a>
+                <a href="delaunay.html">Delaunay</a>
                 <a href="voronoi.html">Voronoi</a>
             </div>
 
@@ -26,39 +26,25 @@
         <div id="container">
 
             <div id="container_canvas">
-                <canvas id="flip_edge" width="750" height="750"></canvas>
-                <canvas id="console_flip_edge" width="750" height="30"></canvas>
+                <canvas id="input_delaunay" width="750" height="750"></canvas>
     
                 <script type="module">
-                    import {flip_delaunay_animated} from '../scripts/animations.js';
                     import {draw_mesh} from '../scripts/drawElement.js';
                     import {flip_algorithm} from '../scripts/flipAlgorithm.js';
                     import {random_triangulation} from '../scripts/randomTriangulation.js';
 
-                    const flip_edge_canvas = document.getElementById("flip_edge");
-                    const console_flip_edge_canvas = document.getElementById("console_flip_edge");
-                    const console_flip_edge_ctx = console_flip_edge_canvas.getContext("2d");
-    
-                    //console.log = function(message) {
-                    //    console_flip_edge_ctx.clearRect(0, 0, console_flip_edge_canvas.width, console_flip_edge_canvas.height);
-                    //    console_flip_edge_ctx.font = "14px Trebuchet MS"; // Increase the font size here
-                    //    console_flip_edge_ctx.fillText(message, 0, 20);
-                    //};
-                    
-                    // ANIMATED FLIP EDGE ALGORITHM
-                    flip_delaunay_animated(nodeData, flip_edge_canvas);
+                    const input_delaunay_canvas = document.getElementById("input_delaunay");
 
                     // NO ANIMATION
-                    //var mesh = random_triangulation(nodeData);
-                    //flip_algorithm(mesh, flip_edge_canvas);
-                    //draw_mesh(mesh, flip_edge_canvas);
+                    var mesh = random_triangulation(inputData);
+                    flip_algorithm(mesh, input_delaunay_canvas);
+                    draw_mesh(mesh, input_delaunay_canvas);
                     
                 </script>
             </div>
 
             <div id="container_info">
-                <h1>Delaunay</h1>
-                <h2>Method: Flip Edge</h2>
+                <h1>Delaunay Triangulation</h1>
                 <p>
                     On this canvas you can visualize an animation for the algorithm that uses flipping edges to achieve Delaunay triangulation. 
                     In the first click, we identify the convex hull through the Graham scan algorithm. With the second click, a generic triangulation 
@@ -73,36 +59,30 @@
 
             <div id="container_canvas">
                 <canvas id="bowyer_watson" width="750" height="750"></canvas>
-                <canvas id="console_bowyer_watson" width="750" height="30"></canvas>
     
                 <script type="module">
-                    import {bowyer_triangulation_animated} from '../scripts/animations.js';
                     import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
+                    import {voronoi} from '../scripts/flipAlgorithm.js';
                     import {draw_mesh} from '../scripts/drawElement.js';
+                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
+                    import {random_triangulation} from '../scripts/randomTriangulation.js';
 
                     const bowyer_watson_canvas = document.getElementById("bowyer_watson");
-                    const console_bowyer_watson_canvas = document.getElementById("console_bowyer_watson");
-                    const console_bowyer_watson_ctx = console_bowyer_watson_canvas.getContext("2d");
-    
-                    //console.log = function(message) {
-                    //    console_bowyer_watson_ctx.clearRect(0, 0, console_bowyer_watson_canvas.width, console_bowyer_watson_canvas.height);
-                    //    console_bowyer_watson_ctx.font = "14px Trebuchet MS"; // Increase the font size here
-                    //    console_bowyer_watson_ctx.fillText(message, 0, 20);
-                    //};
 
                     // ANIMATED BOWYER-WATSON ALGORITHM
-                    bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                    //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
                     
 
                     // NO ANIMATION
-                    //bowyer_triangulation(nodeData, bowyer_watson_canvas);
+                    var mesh = bowyer_triangulation(inputData);
+                    draw_mesh(mesh, bowyer_watson_canvas);
+                    voronoi(mesh, bowyer_watson_canvas);
 
                 </script>
             </div>
 
             <div id="container_info">
-                <h1>Delaunay</h1>
-                <h2>Method: Bowyer-Watson</h2>
+                <h1>Voronoi Diagram</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
                     Facilisi nullam vehicula ipsum a. In nibh mauris cursus mattis molestie a. Pretium nibh ipsum consequat nisl vel pretium. 
                     Vitae et leo duis ut diam quam. Urna cursus eget nunc scelerisque viverra. Ultrices tincidunt arcu non sodales neque. 

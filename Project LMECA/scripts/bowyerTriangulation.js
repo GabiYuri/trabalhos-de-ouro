@@ -5,10 +5,10 @@
 // IMPORT SECTION =====================================
 import {create_mesh_nodes} from './randomTriangulation.js';
 import {draw_mesh} from './drawElement.js';
-import {get_orientation, findConvex} from './convexHull.js';
+import {get_orientation, findConvex, drawConvex} from './convexHull.js';
 
 
-function bowyer_triangulation(nodes) {
+function bowyer_triangulation(nodes,canvas) {
     var mesh = create_mesh_nodes(nodes);
     var nodes2tri = mesh.nodes;
     mesh = super_triangle(mesh);
@@ -16,10 +16,10 @@ function bowyer_triangulation(nodes) {
     for (let node of nodes2tri) {
         add_vertex(mesh, node);
     }
-
+    
     var border = remove_super_triangle(mesh);
-
     var convex_vertex = findConvex(mesh);
+    
     insert_convex(mesh, convex_vertex, border);
     
     //draw_mesh(mesh, canvas);
@@ -286,6 +286,7 @@ function remove_super_triangle(mesh) {
     // delete connected faces from mesh
     for (let face of faces) {
         mesh.faces = mesh.faces.filter(item => item !== face);
+        face.incidentEdge.incidentFace = null;
     }
 
     for (let face of mesh.faces) {
@@ -306,6 +307,7 @@ function remove_super_triangle(mesh) {
         
         // edge na borda virada para fora        
         if (!mesh.edges.includes(edge.next) && !mesh.edges.includes(edge.next.oppo)) {
+            //console.log(edge)
             let orig = edge.oppo.orig;
             let dest = edge.oppo.dest;
             let face = edge.oppo.incidentFace;
@@ -317,6 +319,11 @@ function remove_super_triangle(mesh) {
             edge.next = next;
             edge.oppo = null;
 
+            border.push(edge);
+        }
+        else if (!mesh.edges.includes(edge.oppo.next) && !mesh.edges.includes(edge.oppo.next.oppo)){
+            //console.log(edge);
+            edge.oppo = null;
             border.push(edge);
         }
         

@@ -35,10 +35,10 @@ This document provides an overview of what we have implemented and what has been
 
 *	Pathological cases: 
 
-        - For collinear points: in the case the flipping algorithm deals with collinear points, it will only print this information on the console. There is only case indentification in this scenario. For the Bowyer-Watson algorithm it will 
+        - For collinear points: ☹️ we couldn't make it work
 
-        - For concyclic points
-
+        - For concyclic points: ☹️ we couldn't make it work
+        
         - Not knowing the convex hull: We implemented the Graham scan algorithm to find the convex hull for both flipping edges and Bowyer-Watson algorithms.
 
 

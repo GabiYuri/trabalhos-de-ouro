@@ -6,15 +6,8 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-        <script type="text/javascript" src="../scripts/drawElement.js"></script>
-		<script type="text/javascript" src="../scripts/pointLocation.js"></script>
-		<script type="text/javascript" src="../scripts/flipAlgorithm.js"></script>
-		<script type="text/javascript" src="../scripts/randomTrangulation.js"></script>
-		<script type="text/javascript" src="../scripts/convexHull.js"></script>
-		<script type="text/javascript" src="../scripts/bowyerTriangulation.js"></script>
-
         <!-- CHANGE THIS LINE TO TEST DIFFERENT SET OF POINTS 10 to 1000000 available -->
-        <script type="text/javascript" src="../performance_test/10_random_data.json"></script>
+        <script type="text/javascript" src="../performance_test/100_random_data.json"></script>
         
     </head>
 
@@ -23,10 +16,11 @@
             <h1>Numerical Geometry <i style="font-size: 14px; font-weight: 200;"> Authors: Gabriel de Morais Pires and Gabriela Ishikawa</i></h1>
             <div id="pages">
                 <a href="home.html">Home</a>
-                <a href="about.html">About</a>
                 <a href="convex.html">Convex Hull</a>
                 <a href="delaunay.html">Delaunay</a>
-                <a href="voronoi.html"><b style="text-decoration: underline;">Voronoi</b></a>
+                <a href="voronoi.html">Voronoi</a>
+                <a href="input.html">Input</a>
+                <a href="performance.html"><b style="text-decoration: underline;">Performance</b></a>
             </div>
         </div>
 
@@ -35,20 +29,26 @@
             <div id="container_canvas">
                 <canvas id="performance" width="750" height="750"></canvas>
     
-                <script>
+                <script type="module">
+                    import {draw_mesh} from '../scripts/drawElement.js';
+                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
+                    import {random_triangulation} from '../scripts/randomTriangulation.js';
+                    import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
 
-                    const performance_canvas = document.getElementById("performance");
+                    const performance_canvas = document.getElementById("performance");                
 
-                    // How the time is measured for the performance test 
-                    //mesh = random_triangulation(nodeData);
+                    // How the time is measured for the performance test
                     const startTime = performance.now();
+                    //var mesh = random_triangulation(nodeData);
                     //flip_algorithm(mesh, performance_canvas);
-                    //draw_mesh(mesh, performance_canvas);
-                    mesh = bowyer_triangulation(nodeData, performance_canvas);
+
+                    var mesh = bowyer_triangulation(nodeData);
+                    draw_mesh(mesh, performance_canvas);
+
                     const endTime = performance.now();
                     const elapsedTime = endTime - startTime;
 
-                    console.log(`Elapsed time: ${elapsedTime} milliseconds`);
+                    console.log(`100: ${elapsedTime} milliseconds`);
 
 
                 </script>

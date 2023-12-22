@@ -18,9 +18,9 @@ function bowyer_triangulation(nodes,canvas) {
     }
     
     var border = remove_super_triangle(mesh);
-    var convex_vertex = findConvex(mesh);
+    //var convex_vertex = findConvex(mesh);
     
-    insert_convex(mesh, convex_vertex, border);
+    //insert_convex(mesh, convex_vertex, border);
     
     //draw_mesh(mesh, canvas);
 
@@ -138,7 +138,6 @@ function circumcenter(A, B, C) {
 	const r = Math.sqrt((x - A[0])**2 + (y - A[1])**2);
 	return [x, y, r];
 }
-
 
 function inCircle(triangle, vertex) {
     let nodes = [triangle.incidentEdge.orig, triangle.incidentEdge.dest, triangle.incidentEdge.next.dest];

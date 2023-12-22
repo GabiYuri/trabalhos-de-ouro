@@ -55,6 +55,20 @@ body{
     text-align: justify;
 }
 
+#convex{
+    padding: 10px;
+    border: 2px solid black;
+    border-bottom: 0px;
+    contain: content;
+    
+}
+
+#console_convex{ 
+    padding: 10px;
+    border: 2px solid black;
+    contain: content;
+}
+
 #flip_edge{
     padding: 10px;
     border: 2px solid black;

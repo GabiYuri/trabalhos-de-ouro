@@ -51,7 +51,7 @@ async function flip_algorithm_animated(mesh, canvas) {
 		let edge = stack.pop();
         let msg = "I'm checking the edge between " + edge.orig.id + " and " + edge.dest.id + ".";
 		console.log(msg)
-        await waitDelay(300);
+        await waitDelay(100);
 		
 		// For visualiation purposes
 		clear_canvas(canvas);
@@ -63,7 +63,7 @@ async function flip_algorithm_animated(mesh, canvas) {
 		// If the edge is not Delaunay, flip it and add the new edges to the stack
 		if (!isDelaunay(edge, canvas, animated=true)) {
 			console.log("This edge is not Delaunay.")
-            await waitDelay(300);
+            await waitDelay(100);
 			const wasflipped = flipEdge(edge);
 			draw_mesh(mesh, canvas);
 
@@ -79,7 +79,7 @@ async function flip_algorithm_animated(mesh, canvas) {
 		// iF the edge is Delaunay, remove it from the stack
 		else {
 			console.log("This edge is Delaunay.");
-            await waitDelay(300);
+            await waitDelay(100);
 		} 
 	}
 	console.log("Done!");
@@ -174,43 +174,83 @@ async function bowyer_triangulation_animated(nodes, canvas) {
     return mesh;
 }
 
-async function debug(nodes, canvas) {
 
-    var mesh = create_mesh_nodes(nodes);
+async function findConvex_animated(nodeData, canvas) {
+
+	var mesh = create_mesh_nodes(nodeData);
 	clear_canvas(canvas);
 	draw_mesh(mesh, canvas);
 
-    console.log("Click to generate Super Triangle");
+    console.log("Click to find the Convex Hull");
 	await waitForClick(canvas);
+	
+	var points = mesh.nodes.map(node => node.pos);
 
-    var nodes2tri = mesh.nodes;
-    mesh = super_triangle(mesh);
-	clear_canvas(canvas);
-	draw_mesh(mesh, canvas);
+	// sort by y-axis values
+	points.sort(function(a, b) {return a[1] - b[1]});
+    var bottomMost = points[0];
+    points.splice(0, 1);
 
-    console.log("Click to generate Delaunay Triangulation");
-	console.log(mesh);
-	await waitForClick(canvas);
+	// separates from bottom and top half
+	points.sort(compare_bottomMost(bottomMost));
+    points.unshift(bottomMost);
 
-    for (node of nodes2tri) {
-        add_vertex(mesh, node);
-		clear_canvas(canvas);
-		draw_mesh(mesh, canvas);
-		console.log(node);
-		console.log(mesh);
-		await waitForClick(canvas);
+    // get 2 points to start comparing
+    var stack = [points[0], points[1]];
+    var tracker = 2;
+    var count = 2;
+	for (let i = 0; i < stack.length - 1; i++) {
+		draw_edge(stack[i], stack[i+1], canvas, color="red");
+		await waitDelay(100);
+	}
+    while(true) {
+        var check = false;
+        if (tracker == (points.length)) {
+            break;
+        }
+        if (get_orientation(stack[count - 2], stack[count - 1], points[tracker]) == -1) {
+            stack.push(points[tracker]);
+            count++;
+        } else {
+            count--;
+            stack.pop();
+            check = true;
+        }
+        var s = stack.slice();
+        
+        if (!check) {
+            tracker++;
+        }
+
+		for (let i = 0; i < stack.length - 1; i++) {
+			draw_edge(stack[i], stack[i+1], canvas, color="red");
+		}
+		await waitDelay(100);
     }
 
-	await waitForClick(canvas);
-    var border = remove_super_triangle(mesh);
+	for (let i = 0; i < stack.length-1; i++) {
+		draw_edge(stack[i], stack[i+1], canvas, color="green");
+	}
+	draw_edge(stack[stack.length-1], stack[0], canvas, color="green");
+	await waitDelay(150);
 
-    var convex_vertex = findConvex(mesh);
-    insert_convex(mesh, convex_vertex, border);
-	
-    clear_canvas(canvas);
-    draw_mesh(mesh, canvas);
+	var convexVertex = [];
+	for (let i = 0; i < stack.length; i++) {
+		let id = mesh.nodes.map(node => node.pos).findIndex(element => element === stack[i]);
+		convexVertex.push(mesh.nodes[id]);
+	}
 
-    return mesh;
+	clear_canvas(canvas);
+	draw_mesh(mesh, canvas);
+	for (let i = 0; i < convexVertex.length - 1; i++) {
+		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas, color="steelblue");
+	}
+	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas, color="steelblue");
+	console.log("Done!");
+
+	// make it clockwise
+	convexVertex.reverse();
+    return convexVertex;
 }
 
 

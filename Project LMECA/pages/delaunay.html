@@ -25,6 +25,7 @@
             <div id="pages">
                 <a href="home.html">Home</a>
                 <a href="about.html">About</a>
+                <a href="convex.html">Convex Hull</a>
                 <a href="delaunay.html"><b style="text-decoration: underline;">Delaunay</b></a>
                 <a href="voronoi.html">Voronoi</a>
             </div>
@@ -87,9 +88,9 @@
                         console_bowyer_watson_ctx.fillText(message, 0, 20);
                     };
                     
-                    //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
+                    bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
                     //flip_algorithm(mesh, delaunay_canvas);
-                    debug(nodeData, bowyer_watson_canvas);
+                    //debug(nodeData, bowyer_watson_canvas);
                 </script>
             </div>
 

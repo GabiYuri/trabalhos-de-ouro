@@ -23,40 +23,35 @@
             <div id="pages">
                 <a href="home.html">Home</a>
                 <a href="about.html">About</a>
-                <a href="convex.html">Convex Hull</a>
+                <a href="convex.html"><b style="text-decoration: underline;">Convex Hull</b></a>
                 <a href="delaunay.html">Delaunay</a>
-                <a href="voronoi.html"><b style="text-decoration: underline;">Voronoi</b></a>
+                <a href="voronoi.html">Voronoi</a>
             </div>
         </div>
 
         <div id="container">
 
             <div id="container_canvas">
-                <canvas id="voronoi" width="750" height="750"></canvas>
-                <canvas id="console_voronoi" width="750" height="30"></canvas>
+                <canvas id="convex" width="750" height="750"></canvas>
+                <canvas id="console_convex" width="750" height="30"></canvas>
     
                 <script>
-                    const voronoi_canvas = document.getElementById("voronoi");
-                    const console_voronoi_canvas = document.getElementById("console_voronoi");
-                    const console_voronoi_ctx = console_voronoi_canvas.getContext("2d");
+                    const convex_canvas = document.getElementById("convex");
+                    const console_convex_canvas = document.getElementById("console_convex");
+                    const console_convex_ctx = console_convex_canvas.getContext("2d");
     
                     console.log = function(message) {
-                        console_voronoi_ctx.clearRect(0, 0, console_voronoi_canvas.width, console_voronoi_canvas.height);
-                        console_voronoi_ctx.font = "14px Trebuchet MS"; // Increase the font size here
-                        console_voronoi_ctx.fillText(message, 0, 20);
+                        console_convex_ctx.clearRect(0, 0, console_convex_canvas.width, console_convex_canvas.height);
+                        console_convex_ctx.font = "14px Trebuchet MS"; // Increase the font size here
+                        console_convex_ctx.fillText(message, 0, 20);
                     };
                     
-                    //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
-                    //flip_algorithm(mesh, delaunay_canvas);
-                    //flip_delaunay(nodeData, delaunay_canvas);
-                    mesh = bowyer_triangulation(nodeData, voronoi_canvas);
-                    voronoi(mesh, voronoi_canvas);
-                    //voronoi_animated(nodeData, voronoi_canvas);
+                    findConvex_animated(nodeData, convex_canvas);
                 </script>
             </div>
 
             <div id="container_info">
-                <h1>Voronoi</h1>
+                <h1>Convex Hull</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
                     Facilisi nullam vehicula ipsum a. In nibh mauris cursus mattis molestie a. Pretium nibh ipsum consequat nisl vel pretium. 
                     Vitae et leo duis ut diam quam. Urna cursus eget nunc scelerisque viverra. Ultrices tincidunt arcu non sodales neque. 

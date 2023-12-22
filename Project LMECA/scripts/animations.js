@@ -4,7 +4,7 @@
 
 // IMPORT SECTION =====================================
 import { create_mesh_nodes, create_big_triangles, create_new_triangle } from './randomTriangulation.js';
-import {flip_algorithm, isDelaunay, flipEdge, perpendicular_bisector, intersection_point} from './flipAlgorithm.js';
+import { isDelaunay, flipEdge, perpendicular_bisector, intersection_point} from './flipAlgorithm.js';
 import {draw_mesh, clear_canvas, draw_edge} from './drawElement.js';
 import {get_orientation, compare_bottomMost, findConvex, drawConvex} from './convexHull.js';
 import { super_triangle, add_vertex, remove_super_triangle, insert_convex, bowyer_triangulation} from './bowyerTriangulation.js';
@@ -197,7 +197,6 @@ async function bowyer_triangulation_animated(nodes, canvas) {
     return mesh;
 }
 
-
 async function findConvex_animated(nodeData, canvas) {
 
 	var mesh = create_mesh_nodes(nodeData);
@@ -206,6 +205,8 @@ async function findConvex_animated(nodeData, canvas) {
 
     console.log("Click to find the Convex Hull");
 	await waitForClick(canvas);
+
+	console.log("Finding the Convex Hull...");
 	
 	var points = mesh.nodes.map(node => node.pos);
 
@@ -272,7 +273,6 @@ async function findConvex_animated(nodeData, canvas) {
 	convexVertex.reverse();
     return convexVertex;
 }
-
 
 function waitForClick(canvas) {
 	return new Promise(resolve => {

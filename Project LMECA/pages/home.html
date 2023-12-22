@@ -12,17 +12,157 @@
             <h1>Numerical Geometry <i style="font-size: 14px; font-weight: 200;"> Authors: Gabriel de Morais Pires and Gabriela Ishikawa</i></h1>
             <div id="pages">
                 <a href="home.html"><b style="text-decoration: underline;">Home</b></a>
-                <a href="about.html">About</a>
                 <a href="convex.html">Convex Hull</a>
                 <a href="delaunay.html">Delaunay</a>
                 <a href="voronoi.html">Voronoi</a>
+                <a href="input.html">Input</a>
                 <a href="complexity.html">Complexity</a>
             </div>
         </div>
-
         <div id="container">
-            <p>home</p>
-            <a href="input.html">Input File</a>
+        
+            <div id="home_container">
+                <h1>Delaunay triangulation</h1>
+                <p>
+                    Triangulation is a fundamental concept in computational geometry, serving as a method to partition a given set of data points into a network 
+                    of non-overlapping triangles. This technique is useful, for example, in generating meshes for finite element analysis.
+                </p>
+                <figure>
+                    <img src="../images/delaunay1.jpg" alt="Delaunay triangulation" width="600" height="auto">
+                    <figcaption style="max-width: 600px; font-size: 14px;">In the figure, the cross-section of a motor has been modeled and triangulated for finite element analysis. Through this technique, we can 
+                        numerically calculate the distribution of magnetic flux density or understand how the temperature distribution behaves inside the motor. This 
+                        is part of the LELME2311 course - Physics of Electromechanical Converters.</figcaption>
+                </figure>
+                <p>
+                    Back to the triangularization, when faced with the task of partitioning a set of points into a triangular mesh, the challenge lies in determining 
+                    the optimal connections. A priori, this choice is arbitrary, as defining whether a triangulation is optimal or not depends heavily on the application 
+                    and the intended use. Therefore, it is difficult to establish a criterion to say that one triangulation A is better than triangulation B. Fortunately, 
+                    mathematicians have thought about this issue, and for them, there are triangulations that are better than others.
+                </p>
+                <p>
+                    One of the criteria used is the ability of the triangulation to produce optimal triangle shapes, meaning it can create well-conditioned triangles, 
+                    minimizing the occurrence of extremely acute or obtuse angles, and generating more regular triangulations. Imagine if, on top of that, this triangulation 
+                    was unique, optimal for interpolation, geometrically meaningful, and consistent with spatial relationships. Well, these seem to be sufficient advantages 
+                    that would justify choosing one triangulation over another.
+                </p>
+                <figure>
+                    <img src="../images/delaunay2.jpg" alt="Delaunay triangulation" width="300" height="auto">
+                    <img src="../images/delaunay3.jpg" alt="Delaunay triangulation" width="300" height="auto">
+                </figure>
+                <p>
+                    In 1924, the Russian mathematician Boris Delaunay introduced a triangulation with all these properties, thus creating the Delaunay Triangulation. An 
+                    interesting feature of the Delaunay Triangulation lies in its ability to make decisions about connecting vertices. In the previously presented image, 
+                    vertices were generated randomly and added to the triangulations sequentially. In the left triangulation, vertices were linked based solely on their 
+                    order of receipt, with no effort made to optimize their arrangement. Consequently, some closely located vertices ended up separated by intervening edges, 
+                    creating some elongated and flattened triangles.
+                </p>
+                <p>
+                    In contrast, the right triangulation employed the Delaunay criterion for establishing links. The result is a notably improved connectivity of vertices, 
+                    preserving proximity relationships more effectively. The Delaunay criterion acts as a guiding principle, leveraging geometric considerations to discern 
+                    whether the connection of neighboring vertices forms an optimal structure. 
+                </p>
+                <p>
+                    Furthermore, the Delaunay Triangulation tends to produce triangles that are generally more equilateral compared to those in non-optimal triangulations. 
+                    This characteristic is advantageous for interpolation and data modeling purposes, as these "robust" triangles offer a more uniform representation of the 
+                    surface. Specifically, robust triangles lead to more gradual changes in slope across the edges when compared to their "skinny" counterparts. The smoother 
+                    transition across edges contributes to better continuity properties in interpolated surfaces derived from Delaunay-conforming triangulations, setting them 
+                    apart from surfaces generated from non-optimal triangulations.
+                </p>
+                <h2>How to define triangles for Delaunay triangulation?</h2>
+                <p>
+                    Geometrically, an easy way to understand how this triangulation is created is based on the generation of circumcircles. We know that any three non-collinear 
+                    points define a unique circle that passes exactly through those three points. These points also define a triangle, which will be a unique triangle inside the 
+                    circumference. We call this triangle inscribed in the circumference, or conversely, that the circumference is circumscribed to the triangle.
+                </p>
+                <figure>
+                    <img src="../images/delaunay4.jpg" alt="Delaunay triangulation" width="400" height="auto">
+                </figure>
+                <p>
+                    From the two images, we can already draw valuable insights. Firstly, we see that slim triangle (that is, those with extremely acute or obtuse angles - like the 
+                    one on the right) produce large circumcircles. In these cases, the triangle also covers a smaller area of the circle compared to its counterpart on the left. Additionally, 
+                    the center of the circumference in the case on the right is far from the center of the triangle, which again does not happen with its neighbor.
+                </p>
+                <p>
+                    Based on these aspects, the Delaunay triangulation is defined in such a way that all triangles in the triangulation produce a circumcircle that does not contain any 
+                    other vertices from the mesh except for the three vertices that define the triangle. This criterion, along with the criterion that no set of three collinear points can 
+                    be linked together into a single triangle, contributes to the creation of triangles that resemble more the triangle on the left and minimizes skinny triangles.
+                </p>
+                <p>
+                    Let's explore a bit more the idea that "all triangles in the triangulation produce a circumcircle that does not contain any other vertices from the mesh except for 
+                    the three vertices that define the triangle." In fact, this is the central idea behind constructing robust triangles and minimizing skinny triangles.
+                </p>
+                <figure>
+                    <img src="../images/delaunay5.jpg" alt="Delaunay triangulation" width="400" height="auto">
+                </figure>
+                <p>
+                    If we connect vertices CB, we will create an optimal triangulation from the perspective of the Delaunay criterion. However, if we connect vertices AD, we see that 
+                    the generated triangles are flatter. A key conclusion is that the Delaunay triangulation is optimal because it maximizes the smallest angle in the triangulation, 
+                    precisely avoiding the occurrence of skinny triangles.
+                </p>
+                <p><b><i>Curiosity</i></b></p>
+                <p>
+                    From the previous example, we see that simply switching the common edge between two adjacent triangles was enough to go from a configuration that did not meet the 
+                    Delaunay criteria to one that did. The first algorithm used to create Delaunay triangulations was based exactly on this property. But that is a topic for the next text...
+                </p>
+                <h2>Conclusion</h2>
+                <p>
+                    In conclusion, the Delaunay Triangulation stands out as a powerful and versatile method for organizing dispersed points. The Delaunay Triangulation is good in 
+                    producing well-conditioned triangles, minimizing extremely acute or obtuse angles and generating more regular and visually appealing triangulations.
+                </p>
+                <h2>Practical application</h2>
+                <p>
+                    In the “pedagogical presentation” we begin the topic of triangulation by giving the example of using mesh generation for finite element analysis. Indeed, one interesting 
+                    application of triangulation is in the field of mesh generation for computer graphics and simulations.  In mesh generation, Delaunay triangulation helps to create a mesh 
+                    of elements (triangles in 2D or tetrahedra in 3D) that satisfies certain quality criteria. The quality of the mesh impacts directly the simulations and computations 
+                    results. Again, as example, we can use the FEA used to determine the distribution of magnetic flux density, like we did for the LELME2311 course - Physics of 
+                    Electromechanical Converters.
+                </p>
+
+
+
+
+
+                <h1 style="border-top: 2px solid black; padding-top: 20px;">Voronoi Diagram</h1>
+                <p>
+                    Delaunay triangulation and Voronoi diagrams are interconnected concepts within computational geometry. Their association is rooted in a fundamental duality: a one-to-one 
+                    correspondence exists between Delaunay triangulations and Voronoi diagrams.
+                </p>
+                <p>
+                    As presented before, Delaunay triangulation involves the establishment of non-overlapping triangles among a set of points in a manner that ensures no point resides within 
+                    the circumcircle of any triangle. This geometric arrangement maximizes the minimum angle of the triangles, yielding a well-conditioned and organized triangulation. The crux 
+                    of the relationship with Voronoi diagrams lies in the reciprocal nature of this association: each Delaunay triangulation corresponds uniquely to a Voronoi diagram, and conversely.
+                </p>
+                <p>
+                    Voronoi diagrams, on the other hand, delineate a spatial partition into convex polygons based on designated seed points. Each polygon encapsulates points closer to its 
+                    associated seed point than to any other seed point. The boundaries of these polygons are determined by the perpendicular bisectors of line segments connecting the seed 
+                    points. Notably, the edges of Voronoi polygons are perpendicular to the edges of the Delaunay triangulation. 
+                </p>
+                <figure>
+                    <img src="../images/voronoi1.jpg" alt="Voronoi diagram" width="300" height="auto">
+                    <figcaption style="max-width: 300px; font-size: 14px;">Delaunay triangulation in blue and Voronoi Diagram in red</figcaption>
+                </figure>
+                <p>
+                    One prominent and notable property of Voronoi diagrams is their ability to efficiently represent and visualize spatial proximity relationships. Voronoi diagrams offer an 
+                    intuitive and geometrically meaningful way to partition a space into convex polygons, where each polygon corresponds to a region that is closer to a specific seed point 
+                    than to any other point in the given set. This proximity-based partitioning is valuable in a wide range of applications, including geography, computer science, and engineering.
+                </p>
+                <h2>Practical application</h2>
+                <p>
+                    During the first year of the Master's program in Electromechanical Engineering, students who choose the Mechatronics specialization undertake the construction of a mobile robot as part of the LELME2002 - Project in Mechatronics course. This year-long project involves designing and building a robot capable of performing tasks in a predefined environment with obstacles and other robots, which must be avoided to minimize the risk of collisions.
+                </p>
+                <p>
+                    In this context, a generalization of Voronoi diagrams was used to experiment with possible techniques for robot path planning. The obstacles were represented as polygons, and then the boundaries of the polygons were approximated by a dense set of points. Finally, the Voronoi Diagram was computed considering this set of points as the seed points. The edges of the diagram have the property of being as far away as possible from neighboring seed points, optimizing the task of obstacle avoidance.
+                </p>
+                <figure><img src="../images/voronoi2.jpg" alt="Voronoi diagram" width="300" height="auto"></figure>
+                <p>
+                    Another quite interesting practical application was discovered by the group during their research on this topic. Firstly, it's worth mentioning that both of us are Brazilians and that, in our country, we have a universal public healthcare system. One of the policies involved in this project is the establishment of health centers for the community. These centers offer access to basic health services and are exclusively accessible to people living nearby. Therefore, we found that the Ministry of Health uses a geographic information system based on the use of Voronoi diagrams. To determine the service boundaries of each center, a Voronoi diagram is generated around the seed points representing the health centers. Then, this diagram is "adjusted" considering the layout of the city streets.
+                </p>
+                <figure>
+                    <img src="../images/voronoi3.jpg" alt="Voronoi diagram" width="300" height="auto">
+                    <figcaption style="max-width: 300px; font-size: 14px;">Voronoi diagram of the basic health units in Feira de Santana, Brazil, overlaid on the neighborhood map with a population scale.</figcaption>
+                </figure>
+            </div>
+
         </div>
 
     </body>

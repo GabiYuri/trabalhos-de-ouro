@@ -3,19 +3,19 @@
 
 This document provides an overview of what we have implemented and what has been submitted for evaluation. 
 
-**WARNING:** The only way we found to use the *[robust-predicates module](https://github.com/mourner/robust-predicates)*  was by opening a local host. Therefore, for the code to run in the browser, it is necessary to download the "Live Share" extension (assuming the use of VSCode) and then right-click on one of the .html files in the "pages" folder and click on "Open with Live Server" (or use the shortcut Alt+L Alt+O). If you don't use VSCode, simply use any other method to open the HTML with a local host (we haven't tested, but we assume it should work).
+**⚠️ WARNING:** The only way we found to use the *[robust-predicates module](https://github.com/mourner/robust-predicates)*  was by opening a local host. Therefore, for the code to run in the browser, it is necessary to download the "Live Share" extension (assuming the use of VSCode) and then right-click on one of the .html files in the "pages" folder and click on "Open with Live Server" (or use the shortcut Alt+L Alt+O). If you don't use VSCode, simply use any other method to open the HTML with a local host (we haven't tested, but we assume it should work).
 
-**NOTE:** To import new points, include a file named "input_file.json" in the "data" folder. The variable name should be "inputData" (var inputData = [...]).
+**🛟 NOTE:** To import new points, include a file named "input_file.json" in the "data" folder. The variable name should be "inputData" (var inputData = [...]).
 
 ## Concerning the report:
 
-* In terms of the report submission, we opted to include it on the website instead of creating a separate file. We followed the guidelines and created an educational presentation that offers an informal introduction to Delaunay triangulation and Voronoi diagrams topics (Home Page).
+* In terms of the report submission, we opted to include it on the website instead of creating a separate file. We followed the guidelines and created an educational presentation that offers an informal introduction to Delaunay triangulation and Voronoi diagrams topics (`Home Page`).
 
-* We conducted research on practical applications of the developed algorithms, and the results of this investigation are also included on the website (Home Page).
+* We conducted research on practical applications of the developed algorithms, and the results of this investigation are also included on the website (`Home Page`).
 
-* The implementation of the algorithms was done pedagogically, meaning it was geared towards understanding the concepts presented in class. Our intention was not to create algorithms that are exceptionally fast and competitive with state-of-the-art methods. Nevertheless, we conducted a quick performance evaluation of the two implemented algorithms for Delaunay triangulation—flipping edges and Bowyer-Watson. The results are also presented on the site (Performance Page).
+* The implementation of the algorithms was done pedagogically, meaning it was geared towards understanding the concepts presented in class. Our intention was not to create algorithms that are exceptionally fast and competitive with state-of-the-art methods. Nevertheless, we conducted a quick performance evaluation of the two implemented algorithms for Delaunay triangulation—flipping edges and Bowyer-Watson. The results are also presented on the site (`Performance Page`).
 
-* We chose to implement zoom functionality to enhance the visualization on the canvas displaying the Voronoi diagram. This feature had not been implemented in previous homework assignments.
+* We chose to implement zoom functionality to enhance the visualization on the canvas displaying the Voronoi diagram for the input file (`Input Page`). This feature had not been implemented in previous homework assignments.
 
 ## Regarding the code:
 
@@ -31,6 +31,14 @@ This document provides an overview of what we have implemented and what has been
 
 *	The implementation of the Bowyer-Watson algorithm, which has better complexity compared to flipping edges, was done in an attempt to achieve optimal complexity.
 
-*	We put significant effort into developing an aesthetically pleasing website. We created different pages and canvases to present the content, developed animations, used different colors to facilitate visualization, and more.
+*	We put significant effort into developing an aesthetically pleasing website. We created different pages and canvases to present the content, developed animations, implemented zoom, used different colors to facilitate visualization, and more.
 
-*	Pathological cases: We endeavored to make the Bowyer-Watson implementation more robust to handle these cases. For collinear points. For concyclic points Not knowing the convex hull: We implemented the Graham scan algorithm to find the convex hull for both flipping edges and Bowyer-Watson algorithms.
+*	Pathological cases: 
+
+        - For collinear points: in the case the flipping algorithm deals with collinear points, it will only print this information on the console. There is only case indentification in this scenario. For the Bowyer-Watson algorithm it will 
+
+        - For concyclic points
+
+        - Not knowing the convex hull: We implemented the Graham scan algorithm to find the convex hull for both flipping edges and Bowyer-Watson algorithms.
+
+

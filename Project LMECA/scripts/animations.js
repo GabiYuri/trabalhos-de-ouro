@@ -110,18 +110,16 @@ async function voronoi_animated(nodeData, canvas) {
 
 	// flip algorithm 
 	/*
-	
 	var convexVertex = findConvex(mesh);
 	var points2Triagulate = create_big_triangles(mesh, convexVertex);
 
 	for (let point of points2Triagulate) {
 		create_new_triangle(point, mesh);
-	}
+	} 
+	flip_algorithm(mesh, canvas);
+	*/
 
-    flip_algorithm(mesh, canvas);*/
-
-
-	// bowyer algorithm
+    // bowyer algorithm
 	mesh = bowyer_triangulation(nodeData, canvas);
 	clear_canvas(canvas);
     draw_mesh(mesh, canvas);
@@ -147,11 +145,83 @@ async function voronoi_animated(nodeData, canvas) {
 	for (let face of mesh.faces) {
 
 		var face_id = face.id;
+		var voronoi_edges = [];
+		var border = false;
 
-		// define n1_face_id if face.incidentEdge.oppo is not null
-		if (face.incidentEdge.oppo != null) {let n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
-		if (face.incidentEdge.next.oppo != null) {let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
-		if (face.incidentEdge.next.next.oppo != null) {let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
+		// define an adjacent face, if it exists, and draw the edge between adjecent faces
+		if (face.incidentEdge.oppo != null) {
+			let n1face_id = face.incidentEdge.oppo.incidentFace.id; 
+			voronoi_edges.push(vertex[n1face_id]);
+			draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");
+		}
+		// if it doesnt exist, draw an infine edge from the vertex[face_id] that cross the middle point of the respective edge
+		else {
+			border = true;
+			let limitig_edge = face.incidentEdge;
+
+			// draw the line between the vertex[face_id] and the middle point of the edge
+			var x2 = (limitig_edge.orig.pos[0] + limitig_edge.dest.pos[0]) / 2;
+			var y2 = (limitig_edge.orig.pos[1] + limitig_edge.dest.pos[1]) / 2;
+			//draw_edge([x1, y1], [x2, y2], canvas, "red");
+		};
+		if (face.incidentEdge.next.oppo != null) {
+			let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; 
+			voronoi_edges.push(vertex[n2face_id]);
+			draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");
+		}
+		else {
+			border = true;
+			let limitig_edge = face.incidentEdge.next;
+
+			// draw the line between the vertex[face_id] and the middle point of the edge
+			var x2 = (limitig_edge.orig.pos[0] + limitig_edge.dest.pos[0]) / 2;
+			var y2 = (limitig_edge.orig.pos[1] + limitig_edge.dest.pos[1]) / 2;
+			//draw_edge([x1, y1], [x2, y2], canvas, "red");
+		};
+		if (face.incidentEdge.next.next.oppo != null) {
+			let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; 
+			voronoi_edges.push(vertex[n3face_id]);
+			draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");
+		}
+		else {
+			border = true;
+			let limitig_edge = face.incidentEdge.next.next;
+
+			// draw the line between the vertex[face_id] and the middle point of the edge
+			var x2 = (limitig_edge.orig.pos[0] + limitig_edge.dest.pos[0]) / 2;
+			var y2 = (limitig_edge.orig.pos[1] + limitig_edge.dest.pos[1]) / 2;
+			//draw_edge([x1, y1], [x2, y2], canvas, "red");
+		};
+
+		if (border) {
+			// see the orientation of the two edges
+			let c1 = vertex[face_id];
+			let c2 = voronoi_edges[0];
+			let c3 = voronoi_edges[1];
+
+			let o1 = get_orientation(c2, c1, c3);
+			let o2 = get_orientation(c3, c1, [x2, y2]);
+
+			if (o1 == o2) {
+				
+				// draw a segment that is 10x bigger than the c1 and [x2, y2] segment, starting both on c1
+				let x1 = c1[0];
+				let y1 = c1[1];
+				let x3 = x1 + 10000 * (x2 - x1);
+				let y3 = y1 + 10000 * (y2 - y1);
+				draw_edge([x1,y1], [x3,y3], canvas, "red");
+				
+			}
+			else {
+				
+				// draw a segment that is 10x bigger than the [x2,y2] and c1 segment, starting both on c1
+				let x1 = x2;
+				let y1 = y2;
+				let x3 = c1[0] + 10000 * (c1[0] - x1);
+				let y3 = c1[1] + 10000 * (c1[1] - y1);
+				draw_edge(c1, [x3,y3], canvas, "red");
+			}
+		}
 		await waitDelay(100);
 	}
 

@@ -307,8 +307,8 @@ function voronoi(mesh, canvas) {
 				// draw a segment that is 10x bigger than the c1 and [x2, y2] segment, starting both on c1
 				let x1 = c1[0];
 				let y1 = c1[1];
-				let x3 = x1 + 10 * (x2 - x1);
-				let y3 = y1 + 10 * (y2 - y1);
+				let x3 = x1 + 10000 * (x2 - x1);
+				let y3 = y1 + 10000 * (y2 - y1);
 				draw_edge([x1,y1], [x3,y3], canvas, "red");
 				
 			}
@@ -317,8 +317,8 @@ function voronoi(mesh, canvas) {
 				// draw a segment that is 10x bigger than the [x2,y2] and c1 segment, starting both on c1
 				let x1 = x2;
 				let y1 = y2;
-				let x3 = c1[0] + 10 * (c1[0] - x1);
-				let y3 = c1[1] + 10 * (c1[1] - y1);
+				let x3 = c1[0] + 10000 * (c1[0] - x1);
+				let y3 = c1[1] + 10000 * (c1[1] - y1);
 				draw_edge(c1, [x3,y3], canvas, "red");
 			}
 		}	

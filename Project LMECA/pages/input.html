@@ -51,7 +51,7 @@
                 </div>
     
                 <div id="container_canvas">
-                    <h3>Voronoi Diagram</h3>
+                    <h3>Voronoi Diagram: zoom available</h3>
                     <canvas id="bowyer_watson" width="750" height="750"></canvas>
         
                     <script type="module">
@@ -70,9 +70,80 @@
                         // NO ANIMATION
                         //var mesh = bowyer_triangulation(inputData);
                         var mesh = random_triangulation(inputData);
-                        flip_algorithm(mesh, bowyer_watson_canvas);
-                        draw_mesh(mesh, bowyer_watson_canvas);
-                        voronoi(mesh, bowyer_watson_canvas);
+
+                        const ctx = bowyer_watson_canvas.getContext("2d");
+
+                        // Variables for zooming
+                        let scale = 1;
+                        let offsetX = 0;
+                        let offsetY = 0;
+                        let isDragging = false;
+                        let startDragX, startDragY;
+
+                        function draw() {
+                            // Clear the entire canvas
+                            ctx.clearRect(-10000, -10000, (bowyer_watson_canvas.width)*1000, (bowyer_watson_canvas.height)*1000);
+
+                            // Draw your content here
+                            ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+                            flip_algorithm(mesh, bowyer_watson_canvas);
+                            draw_mesh(mesh, bowyer_watson_canvas);
+                            voronoi(mesh, bowyer_watson_canvas);
+                            
+                        }
+
+		
+                        function zoomIn() {
+                            scale += 0.1;
+                            draw();
+                        }
+
+                        function zoomOut() {
+                            if (scale > 0.5) {
+                                scale -= 0.1;
+                                draw();
+                            }
+                        }
+
+                        function handleScroll(event) {
+                            if (event.deltaY < 0) {
+                                zoomIn();
+                            } else {
+                                zoomOut();
+                            }
+                        }
+
+                        function handleMouseDown(event) {
+                            isDragging = true;
+                            startDragX = event.clientX - offsetX;
+                            startDragY = event.clientY - offsetY;
+                        }
+
+                        function handleMouseMove(event) {
+                            if (isDragging) {
+                                offsetX = event.clientX - startDragX;
+                                offsetY = event.clientY - startDragY;
+                                draw();
+                            }
+                        }
+
+                        function handleMouseUp() {
+                            isDragging = false;
+                        }
+
+                        function handleMouseLeave() {
+                            isDragging = false;
+                        }
+
+                        // Event listeners
+                        bowyer_watson_canvas.addEventListener("wheel", handleScroll);
+                        bowyer_watson_canvas.addEventListener("mousedown", handleMouseDown);
+                        bowyer_watson_canvas.addEventListener("mousemove", handleMouseMove);
+                        bowyer_watson_canvas.addEventListener("mouseup", handleMouseUp);
+                        bowyer_watson_canvas.addEventListener("mouseleave", handleMouseLeave);
+
+                        // Initial draw
+                        draw();
     
                     </script>
     

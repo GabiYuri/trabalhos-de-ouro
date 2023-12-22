@@ -279,6 +279,8 @@ function remove_super_triangle(mesh) {
     for (let face of faces) {
         mesh.faces = mesh.faces.filter(item => item !== face);
         face.incidentEdge.incidentFace = null;
+        face.incidentEdge.next.incidentFace = null;
+        face.incidentEdge.next.next.incidentFace = null;
     }
 
     for (let face of mesh.faces) {
@@ -302,16 +304,19 @@ function remove_super_triangle(mesh) {
             console.log("fora");
             console.log(edge)
 
-            let orig = edge.oppo.orig;
-            let dest = edge.oppo.dest;
-            let face = edge.oppo.incidentFace;
-            let next = edge.oppo.next;
+            let origedge = edge.orig;
+            let destedge = edge.dest;
+            let opnext = edge.oppo.next;
+            let opnextnext = edge.oppo.next.next;
+            let opface = edge.oppo.incidentFace;
 
+            edge.orig = destedge;
+            edge.dest = origedge;
+            edge.next = opnext;
+            edge.next.next = opnextnext;
+            edge.next.next.next = edge;
             edge.oppo = null;
-            edge.orig = orig;
-            edge.dest = dest;
-            edge.incidentFace = face;
-            edge.next = next;
+            edge.incidentFace = opface;
             
 
             border.push(edge);

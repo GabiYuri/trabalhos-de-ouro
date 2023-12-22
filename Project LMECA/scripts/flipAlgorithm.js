@@ -217,6 +217,7 @@ function intersection_point(m1, b1, m2, b2, canvas) {
 	return [x, y];
 }
 
+
 /**
  * @brief				function that print the Voronoi diagram
  * @param mesh 			mesh structure as doubly-connected edge list
@@ -243,8 +244,15 @@ function voronoi(mesh, canvas) {
 
 		// define an adjacent face, if it exists, and draw the edge between adjecent faces
 		if (face.incidentEdge.oppo != null) {let n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
+		// if it doesnt exist, draw an infine edge from the vertex[face_id] that cross the middle point of the respective edge
+		else {
+			let limitig_edge = face.incidentEdge;
+			let [m,b] = perpendicular_bisector(limitig_edge);
+		};
 		if (face.incidentEdge.next.oppo != null) {let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
 		if (face.incidentEdge.next.next.oppo != null) {let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
+		
+		
 		
 	}
 }

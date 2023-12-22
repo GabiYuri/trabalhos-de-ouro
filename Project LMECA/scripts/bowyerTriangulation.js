@@ -19,9 +19,6 @@ function bowyer_triangulation(nodes,canvas) {
     
     var border = remove_super_triangle(mesh);
     var convex_vertex = findConvex(mesh);
-
-    drawConvex(convex_vertex, canvas);
-
     
     insert_convex(mesh, convex_vertex, border);
     

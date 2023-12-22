@@ -112,15 +112,8 @@ body{
     contain: content;
 }
 
-
-#canvas2{
-    width: 80vh;
-    height: 80vh;
-    border:2px solid red;
-}
-
-#canvas3{
-    width: 80vh;
-    height: 80vh;
-    border:2px solid green;
+#input_delaunay{
+    padding: 10px;
+    border: 2px solid black;
+    contain: content;
 }

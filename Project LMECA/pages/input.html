@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>LMECA2170 Project</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/style.css" type="text/css">        
+
+        <script type="text/javascript" src="../data/input_file.json"></script>
+    </head>
+
+    <body>
+        <div id="navbar">
+
+            <h1>Numerical Geometry <i style="font-size: 14px; font-weight: 200;"> Authors: Gabriel de Morais Pires and Gabriela Ishikawa</i></h1>
+            <div id="pages">
+                <a href="home.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="convex.html">Convex Hull</a>
+                <a href="delaunay.html">Delaunay</a>
+                <a href="voronoi.html">Voronoi</a>
+            </div>
+
+        </div>
+
+        <div id="container">
+
+            <div id="container_canvas">
+                <canvas id="input_delaunay" width="750" height="750"></canvas>
+    
+                <script type="module">
+                    import {draw_mesh} from '../scripts/drawElement.js';
+                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
+                    import {random_triangulation} from '../scripts/randomTriangulation.js';
+
+                    const input_delaunay_canvas = document.getElementById("input_delaunay");
+
+                    // NO ANIMATION
+                    var mesh = random_triangulation(inputData);
+                    flip_algorithm(mesh, input_delaunay_canvas);
+                    draw_mesh(mesh, input_delaunay_canvas);
+                    
+                </script>
+            </div>
+
+            <div id="container_info">
+                <h1>Delaunay Triangulation</h1>
+                <p>
+                    On this canvas you can visualize an animation for the algorithm that uses flipping edges to achieve Delaunay triangulation. 
+                    In the first click, we identify the convex hull through the Graham scan algorithm. With the second click, a generic triangulation 
+                    within the convex hull is generated from the set of points provided in the statement. A third click will initiate the animation 
+                    that demonstrates the step-by-step process of the flipping algorithm to achieve a Delaunay triangulation.
+                </p>
+            </div>
+
+        </div>
+
+        <div id="container">
+
+            <div id="container_canvas">
+                <canvas id="bowyer_watson" width="750" height="750"></canvas>
+    
+                <script type="module">
+                    import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
+                    import {voronoi} from '../scripts/flipAlgorithm.js';
+                    import {draw_mesh} from '../scripts/drawElement.js';
+                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
+                    import {random_triangulation} from '../scripts/randomTriangulation.js';
+
+                    const bowyer_watson_canvas = document.getElementById("bowyer_watson");
+
+                    // ANIMATED BOWYER-WATSON ALGORITHM
+                    //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                    
+
+                    // NO ANIMATION
+                    var mesh = bowyer_triangulation(inputData);
+                    draw_mesh(mesh, bowyer_watson_canvas);
+                    voronoi(mesh, bowyer_watson_canvas);
+
+                </script>
+            </div>
+
+            <div id="container_info">
+                <h1>Voronoi Diagram</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Facilisi nullam vehicula ipsum a. In nibh mauris cursus mattis molestie a. Pretium nibh ipsum consequat nisl vel pretium. 
+                    Vitae et leo duis ut diam quam. Urna cursus eget nunc scelerisque viverra. Ultrices tincidunt arcu non sodales neque. 
+                    Massa ultricies mi quis hendrerit dolor magna. Id porta nibh venenatis cras. Nulla aliquet porttitor lacus luctus accumsan. 
+                    Consectetur lorem donec massa sapien faucibus et molestie. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus. 
+                    Sit amet luctus venenatis lectus. Praesent elementum facilisis leo vel.
+                </p>
+            </div>
+
+        </div>
+
+    </body>
+
+</html>

@@ -25,36 +25,39 @@
         </div>
 
         <div id="container">
+            <div id="home_container">
+                <h1>Algorithm's Performance</h1>
+                <p>
+                    To access the code performance, we conducted tests to determine how long the code takes to run considering different numbers of points. Initially, 
+                    we generated 6 files with random points ranging in size from 10 to 1000000 points. The code showing how the time was calculated can be viewed in the 
+                    "performance.html" file. The table summarizes the results obtained.
+                </p>
+                <figure>
+                    <img src="../images/performance1.jpg" alt="Performance" width="400" height="auto">
+                </figure>
+                <p>
+                    Initially, we were a bit surprised by the result, as the flipping edges is an algorithm with O(n^2) complexity, while Bowyer-Watson is a more optimized 
+                    algorithm that can even have O(n^2) complexity depending on how it was implemented but can achieve O(nlogn) complexity. We then tried to run the tests 
+                    again by removing the use of the algorithm to find the convex hull (which also has theoretical O(nlogn) complexity), but still, we achieved the same 
+                    results. Therefore, we formulated two hypotheses:
+                </p>
+                <ul>
+                    <li><b>H1:</b> The implemented Bowyer-Watson algorithm is not optimized enough and is performing close to O(n^2) complexity.</li>
+                    <li><b>H2:</b> The calculation of this time is strongly influenced by the browser, and therefore, the code reaches TimeOut for n > 100000, making inferences about its complexity impossible.</li>
+                </ul>
+                <p>
+                    To test these hypotheses, we downloaded libraries that claim to be highly performant and optimized from GitHub, such as "delaunator". Their runtime is 
+                    calculated for distributions with more than 100 thousand points.
+                </p>
 
-            <div id="container_canvas">
-                <canvas id="performance" width="600" height="600"></canvas>
-    
-                <script type="module">
-                    import {draw_mesh} from '../scripts/drawElement.js';
-                    import {flip_algorithm} from '../scripts/flipAlgorithm.js';
-                    import {random_triangulation} from '../scripts/randomTriangulation.js';
-                    import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
-
-                    const performance_canvas = document.getElementById("performance");                
-
-                    // How the time is measured for the performance test
-                    const startTime = performance.now();
-                    
-                    // Flip algorithm
-                    //var mesh = random_triangulation(nodeData);
-                    //flip_algorithm(mesh, performance_canvas);
-
-                    // Bowyer-Watson algorithm
-                    var mesh = bowyer_triangulation(nodeData);
-                    draw_mesh(mesh, performance_canvas);
-
-                    const endTime = performance.now();
-                    const elapsedTime = endTime - startTime;
-
-                    console.log(`100: ${elapsedTime} milliseconds`);
-
-
-                </script>
+                <figure>
+                    <img src="../images/performance2.jpg" alt="Performance" width="500" height="auto">
+                </figure>
+                <p>
+                    However, even with these libraries, we were unable to make the browser run meshes with more than 100 thousand points, only smaller meshes. Therefore, 
+                    we reached the conclusion that H2 might be true, and the best way to test the code would be using Node, for example. Due to this limitation, we did not 
+                    continue with the tests, and thus, H1 remains open.
+                </p>
             </div>
 
         </div>

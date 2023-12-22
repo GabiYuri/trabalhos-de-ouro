@@ -68,9 +68,10 @@
                         
     
                         // NO ANIMATION
-                        //var mesh = bowyer_triangulation(inputData);
-                        var mesh = random_triangulation(inputData);
-                        flip_algorithm(mesh, bowyer_watson_canvas);
+                        var mesh = bowyer_triangulation(inputData);
+                        console.log(mesh);
+                        //var mesh = random_triangulation(inputData);
+                        //flip_algorithm(mesh, bowyer_watson_canvas);
                         draw_mesh(mesh, bowyer_watson_canvas);
                         voronoi(mesh, bowyer_watson_canvas);
     

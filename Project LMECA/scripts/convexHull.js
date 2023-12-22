@@ -111,7 +111,7 @@ function findConvex(mesh) {
 		convexVertex.push(mesh.nodes[id]);
 	}
 
-	// make it clockwise
+	// make it counterclockwise
 	convexVertex.reverse();
     return convexVertex;
 }

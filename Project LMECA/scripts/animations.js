@@ -239,16 +239,19 @@ async function findConvex_animated(nodeData, canvas) {
             tracker++;
         }
 
+		clear_canvas(canvas);
+		draw_mesh(mesh, canvas);
 		for (let i = 0; i < stack.length - 1; i++) {
-			draw_edge(stack[i], stack[i+1], canvas, "red");
+			draw_edge(s[i], s[i+1], canvas, "red", 2);
 		}
 		await waitDelay(100);
     }
+	draw_edge(s[s.length-1], s[0], canvas, "red", 2);
 
-	for (let i = 0; i < stack.length-1; i++) {
-		draw_edge(stack[i], stack[i+1], canvas, "green");
-	}
-	draw_edge(stack[stack.length-1], stack[0], canvas, "green");
+	//for (let i = 0; i < stack.length-1; i++) {
+	//	draw_edge(stack[i], stack[i+1], canvas, "green", 2);
+	//}
+	//draw_edge(stack[stack.length-1], stack[0], canvas, "green", 2);
 	await waitDelay(150);
 
 	var convexVertex = [];
@@ -256,14 +259,6 @@ async function findConvex_animated(nodeData, canvas) {
 		let id = mesh.nodes.map(node => node.pos).findIndex(element => element === stack[i]);
 		convexVertex.push(mesh.nodes[id]);
 	}
-
-	clear_canvas(canvas);
-	draw_mesh(mesh, canvas);
-	for (let i = 0; i < convexVertex.length - 1; i++) {
-		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas, "steelblue");
-	}
-	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas, "steelblue");
-	console.log("Done!");
 
 	// make it clockwise
 	convexVertex.reverse();

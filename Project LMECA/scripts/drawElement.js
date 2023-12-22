@@ -130,11 +130,11 @@ function clear_canvas(canvas){
  * @param canvas    selected canvas
  * @param color     edge color
  */
-function draw_edge(A, B, canvas, color="black"){
+function draw_edge(A, B, canvas, color="black", line=1){
     // draw a segment AB
     var context = canvas.getContext('2d');
     context.strokeStyle = color;
-	context.lineWidth = 1;
+	context.lineWidth = line;
     context.beginPath();
     context.moveTo(A[0], A[1]);
     context.lineTo(B[0], B[1]);

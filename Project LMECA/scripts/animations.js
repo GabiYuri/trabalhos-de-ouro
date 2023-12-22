@@ -119,7 +119,7 @@ async function voronoi_animated(nodeData, canvas) {
 	}
 
     flip_algorithm(mesh, canvas);*/
-	
+
 
 	// bowyer algorithm
 	mesh = bowyer_triangulation(nodeData, canvas);
@@ -179,19 +179,13 @@ async function bowyer_triangulation_animated(nodes, canvas) {
         add_vertex(mesh, node);
 		clear_canvas(canvas);
 		draw_mesh(mesh, canvas);
-		await waitDelay(100);
+		await waitDelay(150);
     }
 
-	await waitForClick(canvas);
+	await waitDelay(200);
     var border = remove_super_triangle(mesh);
-	clear_canvas(canvas);
-    draw_mesh(mesh, canvas);
-
-	await waitForClick(canvas);
-
     var convex_vertex = findConvex(mesh);
     insert_convex(mesh, convex_vertex, border);
-	console.log(convex_vertex);
 	
     clear_canvas(canvas);
     draw_mesh(mesh, canvas);

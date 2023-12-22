@@ -99,7 +99,7 @@ function draw_point(x, y, canvas, color="black", label=""){
     // draw a point in the coordinates (x, y)
     var context = canvas.getContext('2d');
     context.beginPath();
-    context.arc(x, y, 3, 0, 2 * Math.PI);
+    context.arc(x, y, 2, 0, 2 * Math.PI);
     context.fillStyle = color;
     context.fill();
 

@@ -250,16 +250,12 @@ async function findConvex_animated(nodeData, canvas) {
 		clear_canvas(canvas);
 		draw_mesh(mesh, canvas);
 		for (let i = 0; i < stack.length - 1; i++) {
-			draw_edge(s[i], s[i+1], canvas, "red", 2);
+			draw_edge(s[i], s[i+1], canvas, "red", 1.5);
 		}
 		await waitDelay(100);
     }
-	draw_edge(s[s.length-1], s[0], canvas, "red", 2);
+	draw_edge(s[s.length-1], s[0], canvas, "red", 1.5);
 
-	//for (let i = 0; i < stack.length-1; i++) {
-	//	draw_edge(stack[i], stack[i+1], canvas, "green", 2);
-	//}
-	//draw_edge(stack[stack.length-1], stack[0], canvas, "green", 2);
 	await waitDelay(150);
 
 	var convexVertex = [];

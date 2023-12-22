@@ -356,8 +356,6 @@ function remove_super_triangle(mesh) {
         
         // edge na borda virada para fora        
         if (!mesh.edges.includes(edge.next) && !mesh.edges.includes(edge.next.oppo)) {
-            console.log("fora");
-            console.log(edge)
 
             let origedge = edge.orig;
             let destedge = edge.dest;
@@ -377,18 +375,26 @@ function remove_super_triangle(mesh) {
             border.push(edge);
         }
         else if (!mesh.edges.includes(edge.oppo.next) && !mesh.edges.includes(edge.oppo.next.oppo)){
-            console.log("dentro");
-            console.log(edge);
             //console.log(edge);
+
+            let origedge = edge.orig;
+            let destedge = edge.dest;
+            let next = edge.next;
+            let nextnext = edge.next.next;
+            let face = edge.incidentFace;
+
+            edge.orig = origedge;
+            edge.dest = destedge;
+            edge.next = next;
+            edge.next.next = nextnext;
+            edge.next.next.next = edge;
             edge.oppo = null;
-            edge.next.next.next.oppo = null;
+            edge.incidentFace = face;
             
             border.push(edge);
         }
         
     }
-
-    console.log(border);
     return border;
 }
 

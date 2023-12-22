@@ -79,6 +79,7 @@
                 <script type="module">
                     import {bowyer_triangulation_animated} from '../scripts/animations.js';
                     import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
+                    import {draw_mesh} from '../scripts/drawElement.js';
 
                     const bowyer_watson_canvas = document.getElementById("bowyer_watson");
                     const console_bowyer_watson_canvas = document.getElementById("console_bowyer_watson");
@@ -92,6 +93,7 @@
 
                     // ANIMATED BOWYER-WATSON ALGORITHM
                     //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                    //draw_mesh(mesh, bowyer_watson_canvas);
 
                     // NO ANIMATION
                     bowyer_triangulation(nodeData, bowyer_watson_canvas);

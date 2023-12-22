@@ -8,7 +8,7 @@ import {draw_mesh} from './drawElement.js';
 import {get_orientation, findConvex} from './convexHull.js';
 
 
-function bowyer_triangulation(nodes, canvas) {
+function bowyer_triangulation(nodes) {
     var mesh = create_mesh_nodes(nodes);
     var nodes2tri = mesh.nodes;
     mesh = super_triangle(mesh);
@@ -22,7 +22,7 @@ function bowyer_triangulation(nodes, canvas) {
     var convex_vertex = findConvex(mesh);
     insert_convex(mesh, convex_vertex, border);
     
-    draw_mesh(mesh, canvas);
+    //draw_mesh(mesh, canvas);
 
     return mesh;
 }

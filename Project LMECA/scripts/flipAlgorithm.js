@@ -43,7 +43,6 @@ function flip_algorithm(mesh, canvas) {
 			}
 		}	
 	}
-
 }
 
 /**
@@ -233,18 +232,18 @@ function voronoi(mesh, canvas) {
 		const [m1, b1] = perpendicular_bisector(face.incidentEdge);
 		const [m2, b2] = perpendicular_bisector(face.incidentEdge.next);
 		
-		[x, y] = intersection_point(m1, b1, m2, b2, canvas);
+		var [x, y] = intersection_point(m1, b1, m2, b2, canvas);
 		vertex.push([x, y]);
 	}
 
 	for (let face of mesh.faces) {
 
-		face_id = face.id;
+		var face_id = face.id;
 
 		// define an adjacent face, if it exists, and draw the edge between adjecent faces
-		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
-		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
-		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
+		if (face.incidentEdge.oppo != null) {let n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
+		if (face.incidentEdge.next.oppo != null) {let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
+		if (face.incidentEdge.next.next.oppo != null) {let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
 	}
 }
 

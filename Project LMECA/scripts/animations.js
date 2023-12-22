@@ -3,11 +3,11 @@
 // ===========================================
 
 // IMPORT SECTION =====================================
-import { create_mesh_nodes, create_big_triangles, create_new_triangle } from './randomTrangulation.js';
+import { create_mesh_nodes, create_big_triangles, create_new_triangle } from './randomTriangulation.js';
 import {flip_algorithm, isDelaunay, flipEdge, perpendicular_bisector, intersection_point} from './flipAlgorithm.js';
 import {draw_mesh, clear_canvas, draw_edge} from './drawElement.js';
 import {get_orientation, compare_bottomMost, findConvex, drawConvex} from './convexHull.js';
-import { super_triangle, add_vertex, remove_super_triangle, insert_convex} from './bowyerTriangulation.js';
+import { super_triangle, add_vertex, remove_super_triangle, insert_convex, bowyer_triangulation} from './bowyerTriangulation.js';
 
 
 async function flip_delaunay_animated(nodes, canvas) {
@@ -108,6 +108,9 @@ async function voronoi_animated(nodeData, canvas) {
     console.log("Click to generate Delaunay Triangulation");
 	await waitForClick(canvas);
 
+	// flip algorithm 
+	/*
+	
 	var convexVertex = findConvex(mesh);
 	var points2Triagulate = create_big_triangles(mesh, convexVertex);
 
@@ -115,9 +118,14 @@ async function voronoi_animated(nodeData, canvas) {
 		create_new_triangle(point, mesh);
 	}
 
-    flip_algorithm(mesh, voronoi_canvas);
-	clear_canvas(voronoi_canvas);
-    draw_mesh(mesh, voronoi_canvas);
+    flip_algorithm(mesh, canvas);*/
+	
+
+	// bowyer algorithm
+	mesh = bowyer_triangulation(nodeData, canvas);
+	clear_canvas(canvas);
+    draw_mesh(mesh, canvas);
+
 
 	console.log("Click to generate Voronoi Diagram");
 	await waitForClick(canvas);
@@ -129,7 +137,7 @@ async function voronoi_animated(nodeData, canvas) {
 		const [m1, b1] = perpendicular_bisector(face.incidentEdge);
 		const [m2, b2] = perpendicular_bisector(face.incidentEdge.next);
 		
-		[x, y] = intersection_point(m1, b1, m2, b2, canvas);
+		var [x, y] = intersection_point(m1, b1, m2, b2, canvas);
 		vertex.push([x, y]);
 		await waitDelay(100);
 	}
@@ -138,12 +146,12 @@ async function voronoi_animated(nodeData, canvas) {
 
 	for (let face of mesh.faces) {
 
-		face_id = face.id;
+		var face_id = face.id;
 
 		// define n1_face_id if face.incidentEdge.oppo is not null
-		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
-		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
-		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
+		if (face.incidentEdge.oppo != null) {let n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
+		if (face.incidentEdge.next.oppo != null) {let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
+		if (face.incidentEdge.next.next.oppo != null) {let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
 		await waitDelay(100);
 	}
 

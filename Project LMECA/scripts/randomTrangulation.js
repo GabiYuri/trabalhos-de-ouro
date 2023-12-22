@@ -2,6 +2,12 @@
 // =============== RANDOM TRAINGULATION ===============
 // ====================================================
 
+// IMPORT SECTION =====================================
+import {point_location} from './pointLocation.js';
+import {distance, findConvex} from './convexHull.js';
+
+
+
 /**
  * @brief 					Given all points of the mesh, create a random triangulation
  * @param nodes             Array of nodes [ x, y, z ], but only 2D triagulation
@@ -13,7 +19,7 @@ function random_triangulation(nodes) {
 	var convexVertex = findConvex(mesh);
 	var points2Triagulate = create_big_triangles(mesh, convexVertex);
 
-	for (point of points2Triagulate) {
+	for (let point of points2Triagulate) {
 		create_new_triangle(point, mesh);
 	}
 
@@ -67,7 +73,7 @@ function create_big_triangles(mesh, convexVertex) {
 	let yMin = Number.MAX_VALUE;
 	let xMax = Number.MIN_VALUE;
 	let yMax = Number.MIN_VALUE;
-	for (node of convexVertex) {
+	for (let node of convexVertex) {
 		xMin = Math.min(xMin, node.pos[0]);
 		yMin = Math.min(yMin, node.pos[1]);
 		xMax = Math.max(xMax, node.pos[0]);
@@ -118,7 +124,7 @@ function create_big_triangles(mesh, convexVertex) {
 		}
 	}
 
-	for (edgeName in nodePairToEdge) {
+	for (let edgeName in nodePairToEdge) {
 		if (nodePairToEdge.hasOwnProperty(edgeName)) {
 		  let edge = nodePairToEdge[edgeName];
 		  mesh.edges.push(edge);
@@ -137,7 +143,7 @@ function create_big_triangles(mesh, convexVertex) {
  * @param mesh          Mesh structure as doubly-connected edge list
  * @param canvas        Selected canvas
  */
-function create_new_triangle(point, mesh, canvas) {
+function create_new_triangle(point, mesh) {
 	
 	var inTriangle = point_location(point, mesh);
 
@@ -160,7 +166,7 @@ function create_new_triangle(point, mesh, canvas) {
 	var triangles = [inTriangle, new_tri1, new_tri2];
 
 	var nodePairToEdge = {};
-	for (tri of triangles) {
+	for (let tri of triangles) {
 		var e0 = tri.incidentEdge;
 		var e1 = {
 				orig: e0.dest,
@@ -192,7 +198,7 @@ function create_new_triangle(point, mesh, canvas) {
 		} else nodePairToEdge[[e2.orig.id, e2.dest.id]] = e2;
 	}
 
-	for (edgeName in nodePairToEdge) {
+	for (let edgeName in nodePairToEdge) {
 		if (nodePairToEdge.hasOwnProperty(edgeName)) {
 		  let edge = nodePairToEdge[edgeName];
 		  mesh.edges.push(edge);
@@ -202,4 +208,4 @@ function create_new_triangle(point, mesh, canvas) {
 	return mesh;
 }
 
-
+export { random_triangulation, create_mesh_nodes, create_big_triangles, create_new_triangle }

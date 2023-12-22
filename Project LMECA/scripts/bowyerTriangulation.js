@@ -1,9 +1,19 @@
+// ====================================================
+// =============== BOWYER TRIANGULATION ===============
+// ====================================================
+
+// IMPORT SECTION =====================================
+import {create_mesh_nodes} from './randomTrangulation.js';
+import {draw_mesh} from './drawElement.js';
+import {get_orientation, findConvex} from './convexHull.js';
+
+
 function bowyer_triangulation(nodes, canvas) {
     var mesh = create_mesh_nodes(nodes);
     var nodes2tri = mesh.nodes;
     mesh = super_triangle(mesh);
 
-    for (node of nodes2tri) {
+    for (let node of nodes2tri) {
         add_vertex(mesh, node);
     }
 
@@ -104,7 +114,7 @@ function extreme_points(mesh) {
 	let xMax = Number.MIN_VALUE;
 	let yMax = Number.MIN_VALUE;
 
-	for (node of mesh.nodes) {
+	for (let node of mesh.nodes) {
 		xMax = Math.max(xMax, node.pos[0]);
 		xMin = Math.min(xMin, node.pos[0]);
 		yMax = Math.max(yMax, node.pos[1]);
@@ -145,7 +155,7 @@ function add_vertex(mesh, vertex) {
     var edges = [];
     var faces = [];
 
-    for (triangle of mesh.faces) {
+    for (let triangle of mesh.faces) {
         if (inCircle(triangle, vertex)) {
             edges.push(triangle.incidentEdge);
             edges.push(triangle.incidentEdge.next);
@@ -157,7 +167,7 @@ function add_vertex(mesh, vertex) {
     edges = find_unique_values(edges);
 
     // delete all triangles that contains vertex from the mesh
-    for (triangle of faces) {
+    for (let triangle of faces) {
         triangle.incidentEdge.incidentFace = null;
         triangle.incidentEdge.next.incidentFace = null;
         triangle.incidentEdge.next.next.incidentFace = null;
@@ -169,12 +179,12 @@ function add_vertex(mesh, vertex) {
         mesh.faces = mesh.faces.filter(item => item !== triangle);
     }
 
-    for (face of mesh.faces) {
+    for (let face of mesh.faces) {
         face.id = mesh.faces.indexOf(face);
     }
 
     // delete all repeated edges from the mesh
-    for (edge of edges[1]) {
+    for (let edge of edges[1]) {
         mesh.edges = mesh.edges.filter(item => item !== edge);
     }
 
@@ -186,7 +196,7 @@ function find_unique_values(arr) {
     let uniqueValues = [];
     let repetedValues = [];
 
-    for (value of arr) {
+    for (let value of arr) {
         if (!arr.includes(value.oppo)) {
             uniqueValues.push(value);
         }
@@ -207,7 +217,7 @@ function find_unique_values(arr) {
 function polygon_triangles(mesh, edges, vertex) {
     
 	var nodePairToEdge = {};
-    for (e0 of edges) {
+    for (let e0 of edges) {
         var face = {
                 id: mesh.faces.length,
                 incidentEdge: e0
@@ -245,7 +255,7 @@ function polygon_triangles(mesh, edges, vertex) {
 		} else nodePairToEdge[[e2.orig.id, e2.dest.id]] = e2;
     }
 
-    for (edgeName in nodePairToEdge) {
+    for (let edgeName in nodePairToEdge) {
 		if (nodePairToEdge.hasOwnProperty(edgeName)) {
 		  let edge = nodePairToEdge[edgeName];
 		  mesh.edges.push(edge);
@@ -256,12 +266,12 @@ function polygon_triangles(mesh, edges, vertex) {
 }
 
 function remove_super_triangle(mesh) {
-    vertex = [mesh.nodes[mesh.nodes.length-3], mesh.nodes[mesh.nodes.length-2], mesh.nodes[mesh.nodes.length-1]];
+    var vertex = [mesh.nodes[mesh.nodes.length-3], mesh.nodes[mesh.nodes.length-2], mesh.nodes[mesh.nodes.length-1]];
 
     // get edges and faces that are connected to the super triangle
-    faces = [];
-    edges = [];
-    for (edge of mesh.edges) {
+    var faces = [];
+    var edges = [];
+    for (let edge of mesh.edges) {
         if (edge.orig == vertex[0] || edge.orig == vertex[1] || edge.orig == vertex[2] || edge.dest == vertex[0] || edge.dest == vertex[1] || edge.dest == vertex[2]) {
 
             if (!faces.includes(edge.incidentFace)) faces.push(edge.incidentFace);
@@ -274,16 +284,16 @@ function remove_super_triangle(mesh) {
     }
 
     // delete connected faces from mesh
-    for (face of faces) {
+    for (let face of faces) {
         mesh.faces = mesh.faces.filter(item => item !== face);
     }
 
-    for (face of mesh.faces) {
+    for (let face of mesh.faces) {
         face.id = mesh.faces.indexOf(face);
     }
 
     // delete connected edges from mesh
-    for (edge of edges) {
+    for (let edge of edges) {
         mesh.edges = mesh.edges.filter(item => item !== edge);
         mesh.edges = mesh.edges.filter(item => item !== edge.oppo);
     }
@@ -291,8 +301,8 @@ function remove_super_triangle(mesh) {
     // delete connected nodes from mesh
     mesh.nodes.splice(mesh.nodes.length-3, 3);
 
-    border = [];
-    for (edge of mesh.edges) {
+    var border = [];
+    for (let edge of mesh.edges) {
         
         // edge na borda virada para fora        
         if (!mesh.edges.includes(edge.next) && !mesh.edges.includes(edge.next.oppo)) {
@@ -375,3 +385,5 @@ function insert_convex (mesh, convex, border) {
         }
     }
 }
+
+export { bowyer_triangulation, super_triangle, bounding_box, midpoint, extreme_points, circumcenter, inCircle, add_vertex, find_unique_values, polygon_triangles, remove_super_triangle, insert_convex}

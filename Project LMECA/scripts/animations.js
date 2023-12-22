@@ -1,3 +1,15 @@
+// ===========================================
+// =============== ANIMATIONS ================
+// ===========================================
+
+// IMPORT SECTION =====================================
+import { create_mesh_nodes, create_big_triangles, create_new_triangle } from './randomTrangulation.js';
+import {flip_algorithm, isDelaunay, flipEdge, perpendicular_bisector, intersection_point} from './flipAlgorithm.js';
+import {draw_mesh, clear_canvas, draw_edge} from './drawElement.js';
+import {get_orientation, compare_bottomMost, findConvex, drawConvex} from './convexHull.js';
+import { super_triangle, add_vertex, remove_super_triangle, insert_convex} from './bowyerTriangulation.js';
+
+
 async function flip_delaunay_animated(nodes, canvas) {
     var mesh = create_mesh_nodes(nodes);
 	clear_canvas(canvas);
@@ -17,7 +29,7 @@ async function flip_delaunay_animated(nodes, canvas) {
 	draw_mesh(mesh, canvas);
 	await waitDelay(100);
 
-	for (point of points2Triagulate) {
+	for (let point of points2Triagulate) {
 		mesh = create_new_triangle(point, mesh, canvas);
         console.log("Generating Random Triangulation of the convex hull");
 		clear_canvas(canvas);
@@ -34,7 +46,7 @@ async function flip_algorithm_animated(mesh, canvas) {
 
 	// Insert all the internal edges of the triangulation in a stack
 	let stack = [];
-	for (edge of mesh.edges) {
+	for (let edge of mesh.edges) {
 		if (edge.oppo != null) {
 			stack.push(edge);
 		}
@@ -56,12 +68,12 @@ async function flip_algorithm_animated(mesh, canvas) {
 		// For visualiation purposes
 		clear_canvas(canvas);
 		draw_mesh(mesh, canvas);
-		draw_edge(edge.orig.pos, edge.dest.pos, canvas, color="red");
+		draw_edge(edge.orig.pos, edge.dest.pos, canvas, "red");
 		//await waitDelay(100);
 
 		
 		// If the edge is not Delaunay, flip it and add the new edges to the stack
-		if (!isDelaunay(edge, canvas, animated=true)) {
+		if (!isDelaunay(edge, canvas, true)) {
 			console.log("This edge is not Delaunay.")
             await waitDelay(100);
 			const wasflipped = flipEdge(edge);
@@ -99,7 +111,7 @@ async function voronoi_animated(nodeData, canvas) {
 	var convexVertex = findConvex(mesh);
 	var points2Triagulate = create_big_triangles(mesh, convexVertex);
 
-	for (point of points2Triagulate) {
+	for (let point of points2Triagulate) {
 		create_new_triangle(point, mesh);
 	}
 
@@ -113,7 +125,7 @@ async function voronoi_animated(nodeData, canvas) {
 	let vertex = [];
 
 	// For every triangle, draw the perpendicular bisector of each edge
-	for (face of mesh.faces) {
+	for (let face of mesh.faces) {
 		const [m1, b1] = perpendicular_bisector(face.incidentEdge);
 		const [m2, b2] = perpendicular_bisector(face.incidentEdge.next);
 		
@@ -124,14 +136,14 @@ async function voronoi_animated(nodeData, canvas) {
 
 	//console.log(vertex);
 
-	for (face of mesh.faces) {
+	for (let face of mesh.faces) {
 
 		face_id = face.id;
 
 		// define n1_face_id if face.incidentEdge.oppo is not null
-		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, color="red");}
-		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, color="red");}
-		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, color="red");}
+		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
+		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
+		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
 		await waitDelay(100);
 	}
 
@@ -200,7 +212,7 @@ async function findConvex_animated(nodeData, canvas) {
     var tracker = 2;
     var count = 2;
 	for (let i = 0; i < stack.length - 1; i++) {
-		draw_edge(stack[i], stack[i+1], canvas, color="red");
+		draw_edge(stack[i], stack[i+1], canvas, "red");
 		await waitDelay(100);
 	}
     while(true) {
@@ -223,15 +235,15 @@ async function findConvex_animated(nodeData, canvas) {
         }
 
 		for (let i = 0; i < stack.length - 1; i++) {
-			draw_edge(stack[i], stack[i+1], canvas, color="red");
+			draw_edge(stack[i], stack[i+1], canvas, "red");
 		}
 		await waitDelay(100);
     }
 
 	for (let i = 0; i < stack.length-1; i++) {
-		draw_edge(stack[i], stack[i+1], canvas, color="green");
+		draw_edge(stack[i], stack[i+1], canvas, "green");
 	}
-	draw_edge(stack[stack.length-1], stack[0], canvas, color="green");
+	draw_edge(stack[stack.length-1], stack[0], canvas, "green");
 	await waitDelay(150);
 
 	var convexVertex = [];
@@ -243,9 +255,9 @@ async function findConvex_animated(nodeData, canvas) {
 	clear_canvas(canvas);
 	draw_mesh(mesh, canvas);
 	for (let i = 0; i < convexVertex.length - 1; i++) {
-		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas, color="steelblue");
+		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas, "steelblue");
 	}
-	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas, color="steelblue");
+	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas, "steelblue");
 	console.log("Done!");
 
 	// make it clockwise
@@ -263,3 +275,6 @@ function waitForClick(canvas) {
 function waitDelay(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+
+export {flip_delaunay_animated, flip_algorithm_animated, voronoi_animated, bowyer_triangulation_animated, findConvex_animated, waitForClick, waitDelay}

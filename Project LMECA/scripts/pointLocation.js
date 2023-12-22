@@ -2,6 +2,10 @@
 // =============== POINT LOCATION ================
 // ===============================================
 
+// IMPORT SECTION =====================================
+import {get_orientation} from './convexHull.js';
+
+
 
 /**
  * @brief				Get the point location and find the triangle that contains it
@@ -15,8 +19,8 @@ function point_location(node, mesh) {
 
 	// get a reference edge and point
 	var refFace = mesh.faces[0];
-	A = refFace.incidentEdge.orig.pos;
-	B = refFace.incidentEdge.dest.pos;
+	var A = refFace.incidentEdge.orig.pos;
+	var B = refFace.incidentEdge.dest.pos;
 	var refPoint = [ A[0] + (1/3) * (B[0] - A[0]), A[1] + (1/3) * (B[1] - A[1]) ];
 	
 	// get segment between reference edge and point
@@ -120,3 +124,5 @@ function check_overlap(A, B, C, D) {
     if (xstart_max > xend_min || ystart_max > yend_min) return 0; 
     return 1; // overlap
 }
+
+export {point_location, find_triangle, check_inside_triangle, check_intersection, check_overlap}

@@ -2,9 +2,8 @@
 // =============== CONVEX HULL ===============
 // ===========================================
 
-// IMPORT SECTION =====================================
-import {draw_edge} from './drawElement.js';
-import {orient2d} from '../node_modules/robust-predicates/index.js';
+
+import { orient2d } from '../node_modules/robust-predicates/index.js';
 
 /**
  * @brief           Calculates the cross-product between the vector to get orientation
@@ -13,7 +12,7 @@ import {orient2d} from '../node_modules/robust-predicates/index.js';
  * @param C        	xy-coordinate of C
  * @returns         1: counterclockwise; 0: collinear; -1: clockwise;
  */
-function get_orientation(A, B, C) {
+export function get_orientation(A, B, C) {
     
     const ccw = orient2d(A[0], A[1], B[0], B[1], C[0], C[1]);
 
@@ -40,7 +39,7 @@ function get_orientation(A, B, C) {
  * @param B        	xy-coordinate of B   
  * @returns 		distance between A and B
  */
-function distance(A, B) {
+export function distance(A, B) {
     var res = ((B[0] - A[0]) ** 2) + ((B[1] - A[1]) ** 2);
     res = Math.sqrt(res);
     return res;
@@ -52,7 +51,7 @@ function distance(A, B) {
  * @param bottomMost 	xy-coordinate of the bottom-most point
  * @returns 		    function to compare the points
  */
-function compare_bottomMost(bottomMost) {
+export function compare_bottomMost(bottomMost) {
     return function compare(A, B) { 
         var p = bottomMost;
         var o = get_orientation(p, A, B); 
@@ -68,7 +67,7 @@ function compare_bottomMost(bottomMost) {
  * @param mesh		mesh structure as doubly-connected edge list
  * @returns 		Array of vertices of the convex hull
  */
-function findConvex(mesh) {
+export function findConvex(mesh) {
 	
 	var points = mesh.nodes.map(node => node.pos);
 
@@ -115,17 +114,3 @@ function findConvex(mesh) {
 	convexVertex.reverse();
     return convexVertex;
 }
-
-/**
- * @brief					Draw the outline of the convex hull
- * @param convexVertex 		Array of vertices of the convex hull
- * @param canvas 			selected canvas
- */
-function drawConvex(convexVertex, canvas) {
-	for (let i = 0; i < convexVertex.length - 1; i++) {
-		draw_edge(convexVertex[i].pos, convexVertex[i+1].pos, canvas, "steelblue");
-	}
-	draw_edge(convexVertex[convexVertex.length-1].pos, convexVertex[0].pos, canvas, "steelblue");
-}
-
-export {get_orientation, distance, compare_bottomMost, findConvex, drawConvex}

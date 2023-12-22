@@ -2,6 +2,12 @@
 // =============== FLIP ALGORITHM =================
 // ================================================
 
+// IMPORT SECTION =====================================
+import {check_intersection} from './pointLocation.js';
+import {draw_point, draw_edge, draw_circle} from './drawElement.js';
+import {distance} from './convexHull.js';
+import {circumcenter} from './bowyerTriangulation.js';
+
 
 /**
  * @brief				use the flip algorithm to triangulate a set of points
@@ -12,7 +18,7 @@ function flip_algorithm(mesh, canvas) {
 
 	// insert all the internal edges of the triangulation in a stack
 	let stack = [];
-	for (edge of mesh.edges) {
+	for (let edge of mesh.edges) {
 		if (edge.oppo != null) {
 			stack.push(edge);
 		}
@@ -67,13 +73,13 @@ function isDelaunay(edge, canvas, animated=false) {
 
 	if (animated) {
 	// plot A, B, C1, C2
-	draw_point(A[0], A[1], canvas, color="red");
-	draw_point(B[0], B[1], canvas, color="red");
-	draw_point(C1[0], C1[1], canvas, color="red");
-	draw_point(C2[0], C2[1], canvas, color="red");
+	draw_point(A[0], A[1], canvas, "red");
+	draw_point(B[0], B[1], canvas, "red");
+	draw_point(C1[0], C1[1], canvas, "red");
+	draw_point(C2[0], C2[1], canvas, "red");
 	// plot circumcenters and circles
-	draw_point(xc1, yc1, canvas, color="red");
-	draw_point(xc2, yc2, canvas, color="red");
+	draw_point(xc1, yc1, canvas, "red");
+	draw_point(xc2, yc2, canvas, "red");
 	draw_circle(xc1, yc1, rc1, canvas);
 	draw_circle(xc2, yc2, rc2, canvas);
 	}
@@ -205,7 +211,7 @@ function intersection_point(m1, b1, m2, b2, canvas) {
 	// calculate the y-coordinate of the intersection point
 	const y = m1 * x + b1;
 
-	draw_point(x, y, canvas, color="red");
+	draw_point(x, y, canvas, "red");
 
 	// return the coordinates of the intersection point
 	return [x, y];
@@ -222,7 +228,7 @@ function voronoi(mesh, canvas) {
 	let vertex = [];
 
 	// for every triangle, draw the perpendicular bisector of each edge
-	for (face of mesh.faces) {
+	for (let face of mesh.faces) {
 		const [m1, b1] = perpendicular_bisector(face.incidentEdge);
 		const [m2, b2] = perpendicular_bisector(face.incidentEdge.next);
 		
@@ -230,13 +236,15 @@ function voronoi(mesh, canvas) {
 		vertex.push([x, y]);
 	}
 
-	for (face of mesh.faces) {
+	for (let face of mesh.faces) {
 
 		face_id = face.id;
 
 		// define an adjacent face, if it exists, and draw the edge between adjecent faces
-		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, color="red");}
-		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, color="red");}
-		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, color="red");}
+		if (face.incidentEdge.oppo != null) {n1face_id = face.incidentEdge.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n1face_id], canvas, "red");}
+		if (face.incidentEdge.next.oppo != null) {n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
+		if (face.incidentEdge.next.next.oppo != null) {n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
 	}
 }
+
+export {flip_algorithm, isDelaunay, flipEdge, perpendicular_bisector, intersection_point, voronoi}

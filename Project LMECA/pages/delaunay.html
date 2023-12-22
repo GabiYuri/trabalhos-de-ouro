@@ -4,16 +4,7 @@
     <head>
         <title>LMECA2170 Project</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="../css/style.css" type="text/css">
-
-        <script type="text/javascript" src="../scripts/drawElement.js"></script>
-		<script type="text/javascript" src="../scripts/pointLocation.js"></script>
-		<script type="text/javascript" src="../scripts/flipAlgorithm.js"></script>
-		<script type="text/javascript" src="../scripts/randomTrangulation.js"></script>
-		<script type="text/javascript" src="../scripts/convexHull.js"></script>
-		<script type="text/javascript" src="../scripts/bowyerTriangulation.js"></script>
-        <script type="text/javascript" src="../scripts/animations.js"></script>
-        
+        <link rel="stylesheet" href="../css/style.css" type="text/css">        
 
         <script type="text/javascript" src="../data/nodes_coarse.json"></script>
     </head>
@@ -38,7 +29,9 @@
                 <canvas id="flip_edge" width="750" height="750"></canvas>
                 <canvas id="console_flip_edge" width="750" height="30"></canvas>
     
-                <script>
+                <script type="module">
+                    import {flip_delaunay_animated} from '../scripts/animations.js';
+
                     const flip_edge_canvas = document.getElementById("flip_edge");
                     const console_flip_edge_canvas = document.getElementById("console_flip_edge");
                     const console_flip_edge_ctx = console_flip_edge_canvas.getContext("2d");
@@ -52,8 +45,8 @@
                     //mesh = random_triangulation_animated(nodeData, delaunay_canvas);
                     //flip_algorithm(mesh, delaunay_canvas);
                     flip_delaunay_animated(nodeData, flip_edge_canvas);
-                    mesh = random_triangulation(nodeData);
-                    flip_algorithm(mesh, flip_edge_canvas);
+                    //mesh = random_triangulation(nodeData);
+                    //flip_algorithm(mesh, flip_edge_canvas);
                 </script>
             </div>
 
@@ -88,7 +81,7 @@
                         console_bowyer_watson_ctx.fillText(message, 0, 20);
                     };
                     
-                    bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
+                    //bowyer_triangulation_animated(nodeData, bowyer_watson_canvas);
                     //flip_algorithm(mesh, delaunay_canvas);
                     //debug(nodeData, bowyer_watson_canvas);
                 </script>

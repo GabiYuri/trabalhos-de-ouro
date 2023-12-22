@@ -18,7 +18,7 @@ function size_adapt(canvas, nodes, offset, margin=0) {
     let xMax = Number.MIN_VALUE;
     let yMax = Number.MIN_VALUE;
 
-    for (node of nodes) {
+    for (let node of nodes) {
         xMax = Math.max(xMax, node.pos[0]);
         xMin = Math.min(xMin, node.pos[0]);
         yMax = Math.max(yMax, node.pos[1]);
@@ -36,7 +36,7 @@ function size_adapt(canvas, nodes, offset, margin=0) {
     const scale = Math.min(canvas.width / xRange, canvas.height / yRange);
 
     // Transform node positions based on the adjusted bounding box and the offset
-    for (node of nodes)
+    for (let node of nodes)
         node.pos = transform(node.pos, scale, xMin, yMin, offset);
 
     return { scale: scale, xMin: xMin, yMin: yMin };
@@ -63,12 +63,12 @@ function transform(pos, scale, xMin, yMin, offset) {
  * @param canvas        selected canvas
  */
 function draw_mesh(mesh, canvas) {
-	size_adapt(canvas, mesh.nodes, offset=0);
+	size_adapt(canvas, mesh.nodes, 0);
 
 	// Draw triangles
 	var context = canvas.getContext('2d');
 	context.strokeStyle = "steelblue";
-	for (face of mesh.faces) {
+	for (let face of mesh.faces) {
 		var edge = face.incidentEdge;
 		var face_nodes = [edge.orig.pos, edge.next.orig.pos, edge.next.next.orig.pos];
 		context.beginPath();
@@ -81,8 +81,8 @@ function draw_mesh(mesh, canvas) {
 	}
 
 	// Draw nodes
-	for (node of mesh.nodes) {
-		draw_point(node.pos[0], node.pos[1], canvas, color="midnightblue", label=node.id.toString());
+	for (let node of mesh.nodes) {
+		draw_point(node.pos[0], node.pos[1], canvas, "midnightblue", node.id.toString());
 	}
 }
 
@@ -152,7 +152,7 @@ function draw_edge(A, B, canvas, color="black"){
 function draw_circle(x, y, r, canvas) {
 
 	// draw the circumcircle
-	context = canvas.getContext('2d');
+	var context = canvas.getContext('2d');
 	context.beginPath();
 	context.arc(x, y, r, 0, 2 * Math.PI);
 	context.stroke();
@@ -200,3 +200,5 @@ function fill_triangle(triangle, canvas, color="lightblue") {
     context.fill();
     context.globalAlpha = 1;
 }
+
+export {size_adapt, transform, draw_mesh, draw_point, clear_canvas, draw_edge, draw_circle, draw_line, fill_triangle}

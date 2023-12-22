@@ -1,8 +1,9 @@
 
 This document provides an overview of what we have implemented and what has been submitted for evaluation. 
 
-**NOTE:** 
-To import new points, include a file named "input_file.json" in the "data" folder. The variable name should be "inputData" (var inputData = [...]).
+**WARNING:** The only way we found to use the "robust-predicates" module was by opening a local host. Therefore, for the code to run in the browser, it is necessary to download the "Live Share" extension (assuming the use of VSCode) and then right-click on one of the .html files in the "pages" folder and click on "Open with Live Server" (or use the shortcut Alt+L Alt+O). If you don't use VSCode, simply use any other method to open the HTML with a local host (we haven't tested, but we assume it should work).
+
+**NOTE:** To import new points, include a file named "input_file.json" in the "data" folder. The variable name should be "inputData" (var inputData = [...]).
 
 ## Concerning the report:
 

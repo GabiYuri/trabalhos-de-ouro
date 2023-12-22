@@ -248,7 +248,6 @@ function voronoi(mesh, canvas) {
 		else {
 			let limitig_edge = face.incidentEdge;
 			let [m,b] = perpendicular_bisector(limitig_edge);
-			draw_to_end(m, b, vertex[face_id], canvas, "red");
 		};
 		if (face.incidentEdge.next.oppo != null) {let n2face_id = face.incidentEdge.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n2face_id], canvas, "red");}
 		if (face.incidentEdge.next.next.oppo != null) {let n3face_id = face.incidentEdge.next.next.oppo.incidentFace.id; draw_edge(vertex[face_id], vertex[n3face_id], canvas, "red");}
@@ -258,4 +257,4 @@ function voronoi(mesh, canvas) {
 	}
 }
 
-export {flip_algorithm, isDelaunay, flipEdge, perpendicular_bisector, intersection_point, voronoi, draw_to_end}
+export {flip_algorithm, isDelaunay, flipEdge, perpendicular_bisector, intersection_point, voronoi}

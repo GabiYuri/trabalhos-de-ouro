@@ -6,8 +6,6 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="../css/style.css" type="text/css">
         <script type="text/javascript" src="../data/nodes_coarse.json"></script>
-
-        <script type="text/javascript" src="../scripts/randomTrangulation.js"></script>
     </head>
 
     <body>
@@ -24,14 +22,6 @@
 
         <div id="container">
             <p>home</p>
-            <script type="module">
-                import { orient2d } from '../node_modules/robust-predicates/index.js';
-                import { findConvex } from '../scripts/teste.js'
-                //var x = orient2d(nodeData[0][0], nodeData[0][1], nodeData[1][0], nodeData[1][1], nodeData[2][0], nodeData[2][1]);
-                //console.log(x);
-                var mesh = create_mesh_nodes(nodeData);
-                console.log(findConvex(mesh));
-            </script>
         </div>
 
     </body>

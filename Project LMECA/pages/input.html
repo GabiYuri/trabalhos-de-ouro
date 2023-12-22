@@ -30,19 +30,21 @@
             </div>
             <div id="container">
                 <div id="container_canvas">
-                    <h3>Delaunay Triangulation</h3>
+                    <h3>Delaunay Triangulation (Flip Algorithm)</h3>
                     <canvas id="input_delaunay" width="600" height="600"></canvas>
         
                     <script type="module">
                         import {draw_mesh} from '../scripts/drawElement.js';
                         import {flip_algorithm} from '../scripts/flipAlgorithm.js';
                         import {random_triangulation} from '../scripts/randomTriangulation.js';
+                        import {bowyer_triangulation} from '../scripts/bowyerTriangulation.js';
     
                         const input_delaunay_canvas = document.getElementById("input_delaunay");
     
                         // NO ANIMATION
-                        var mesh = random_triangulation(inputData);
-                        flip_algorithm(mesh, input_delaunay_canvas);
+                        //var mesh = random_triangulation(inputData);
+                        //flip_algorithm(mesh, input_delaunay_canvas);
+                        var mesh = bowyer_triangulation(inputData, input_delaunay_canvas);
                         draw_mesh(mesh, input_delaunay_canvas);
                         
                     </script>

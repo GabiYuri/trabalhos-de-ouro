@@ -35,10 +35,10 @@ This document provides an overview of what we have implemented and what has been
 
 *	Pathological cases: 
 
-        - For collinear points: ☹️ we couldn't make it work
+        - For collinear points: we can generate the mesh with the Bowyer algorithm, not with the flippin edges. The Voronoi Diagram still apearing degenerative. 
 
         - For concyclic points: ☹️ we couldn't make it work
-        
+
         - Not knowing the convex hull: We implemented the Graham scan algorithm to find the convex hull for both flipping edges and Bowyer-Watson algorithms.
 
 

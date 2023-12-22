@@ -184,6 +184,10 @@ async function bowyer_triangulation_animated(nodes, canvas) {
 
 	await waitDelay(200);
     var border = remove_super_triangle(mesh);
+	clear_canvas(canvas);
+    draw_mesh(mesh, canvas);
+	await waitDelay(200);
+
     var convex_vertex = findConvex(mesh);
     insert_convex(mesh, convex_vertex, border);
 	
@@ -261,6 +265,8 @@ async function findConvex_animated(nodeData, canvas) {
 		let id = mesh.nodes.map(node => node.pos).findIndex(element => element === stack[i]);
 		convexVertex.push(mesh.nodes[id]);
 	}
+
+	console.log("Done!");
 
 	// make it clockwise
 	convexVertex.reverse();

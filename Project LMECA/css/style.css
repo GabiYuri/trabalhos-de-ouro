@@ -1,6 +1,6 @@
 body{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    color: black;
+    color: black;;
 }
 
 #navbar{
@@ -37,7 +37,7 @@ body{
     display: flex;
     align-items: center;
     margin-top: 10px;
-    justify-content: space-between;
+    justify-content: space-around;
 
 }
 
@@ -53,7 +53,18 @@ body{
     flex-direction: column;
     padding: 20px;
     text-align: justify;
+    width: 800px;
 }
+
+
+#home_container{
+    display: flex;
+    flex-direction: column;
+    width: 70vw;
+    text-align: justify;
+    margin: auto;
+}
+
 
 #convex{
     padding: 10px;
@@ -116,4 +127,8 @@ body{
     padding: 10px;
     border: 2px solid black;
     contain: content;
+}
+
+h1, h2 {
+    text-align: justify;
 }
